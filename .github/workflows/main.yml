@@ -15,5 +15,5 @@ jobs:
         with:
           flutter-version: "1.12.x"
           channel: "stable"
-      - run: flutter pub get
-      - run: flutter test
+      - run: flutter test test/tree_view_test.dart
+      - run: flutter test test/tree_view_test.dart

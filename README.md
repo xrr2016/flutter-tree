@@ -1,8 +1,6 @@
 # flutter_tree
 
-[![GitHub stars](https://img.shields.io/github/stars/xrr2016/flutter_tree)](https://github.com/xrr2016/flutter_tree/stargazers)
-
-[![pub package](https://img.shields.io/badge/pub-v0.1.0-blue)](https://pub.dev/packages/flutter_tree)
+[![GitHub stars](https://img.shields.io/github/stars/xrr2016/flutter_tree)](https://github.com/xrr2016/flutter_tree/stargazers) [![pub package](https://img.shields.io/pub/v/flutter_tree.svg)](https://pub.dev/packages/flutter_tree) ![test](https://github.com/xrr2016/flutter_tree/workflows/widget%20test/badge.svg)
 
 Flutter tree widget
 
