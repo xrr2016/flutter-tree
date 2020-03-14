@@ -43,7 +43,7 @@ TreeView(data: data),
 
 | property | type | default | description | required |
 | :- | :---: | :---: | :---: | :-: |
-| data | List<Map<String, dynamic>> | 单元格 | tree data | true |
+| data | List<Map<String, dynamic>> |  | tree data | true |
 | labelKey | String | `label` | Key to render label text | false |
 | expanedKey | String | `expaned` | Key that determine whether the tree expands  | false|
 | childrenKey | String | `children` | The key of the subtree data | false |
