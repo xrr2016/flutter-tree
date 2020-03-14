@@ -10,8 +10,9 @@ Flutter tree widget
 
 ## Install
 
-```sh
-flutter_tree: ^0.1.0
+```yml
+dependencies:
+  flutter_tree: ^0.1.0
 ```
 
 ## Uasge
@@ -36,6 +37,21 @@ TreeView(data: data),
 
 ## Config
 
+![example](./example/tree-widget.png)
+
+### TreeView
+
+| property | type | default | description | required |
+| :- | :---: | :---: | :---: | :-: |
+| data | List<Map<String, dynamic>> | 单元格 | tree data | true |
+| labelKey | String | `label` | Key to render label text | false |
+| expanedKey | String | `expaned` | Key that determine whether the tree expands  | false|
+| childrenKey | String | `children` | The key of the subtree data | false |
+| leading | Widget | `IconButton()` | leading widget | false |
+| expanedIcon | Icon | `Icon(Icons.expand_more)` | right icon | false |
+| offsetLeft | double | `24.0` | Child tree offset left | false |
+| leadingOnTap | Function | `null` | Callback when tap on leading | false |
+| labelOnTap | Function | `null` | Callback when tap on label | false |
 
 
 ## Contribute
