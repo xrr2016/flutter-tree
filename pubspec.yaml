@@ -1,8 +1,8 @@
 name: flutter_tree
 description: Flutter tree widget.
 version: 0.1.0
-author: Cold Stone
-homepage:
+# author: Cold Stone <xiaoranran1993@outlook.com>
+homepage: https://github.com/xrr2016/flutter_tree
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
