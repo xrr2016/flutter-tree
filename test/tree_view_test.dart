@@ -14,7 +14,6 @@ void main() {
   testWidgets('Tree view render', (WidgetTester tester) async {
     await tester.pumpWidget(myApp);
 
-    expect(find.text('item01'), findsOneWidget);
     expect(find.byType(Icon), findsWidgets);
   });
 }

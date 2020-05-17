@@ -23,24 +23,6 @@ TreeNode(
       title: Text('This is a title!'),
       children: <Widget>[
         TreeNode(title: Text('This is a title!')),
-        TreeNode(
-          title: Text('This is a title!'),
-          children: <Widget>[
-            TreeNode(title: Text('This is a title!')),
-            TreeNode(title: Text('This is a title!')),
-            TreeNode(title: Text('This is a title!')),
-          ],
-        ),
-        TreeNode(title: Text('This is a title!')),
-        TreeNode(title: Text('This is a title!')),
-        TreeNode(
-          title: Text('This is a title!'),
-          children: <Widget>[
-            TreeNode(title: Text('This is a title!')),
-            TreeNode(title: Text('This is a title!')),
-            TreeNode(title: Text('This is a title!')),
-          ],
-        ),
       ],
     ),
   ],
@@ -50,6 +32,20 @@ TreeNode(
 ### TreeView
 
 ```dart
+final List<Map<String, dynamic>> treeData = [
+  {
+    "title": "Title",
+    "expaned": true,
+    "children": [
+      {
+        "title": "Title",
+        "expaned": true,
+        "children": [],
+      },
+    ],
+  }
+];
+
 TreeView(
   data: treeData,
   titleOnTap: () {
