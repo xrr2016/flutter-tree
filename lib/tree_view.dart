@@ -1,55 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tree/tree_item.dart';
-import 'package:flutter_tree/tree_node.dart';
+
+import 'tree_node.dart';
 
 class TreeView extends StatelessWidget {
   final List<Map<String, dynamic>> data;
 
-  final String labelKey;
+  final String titleKey;
+  final String leadingKey;
   final String expanedKey;
   final String childrenKey;
-
-  final Widget leading;
   final double offsetLeft;
-  final Widget expanedIcon;
 
-  final Function labelOnTap;
+  final Function titleOnTap;
   final Function leadingOnTap;
+  final Function trailingOnTap;
 
   const TreeView({
     @required this.data,
-    this.leading = const IconButton(icon: Icon(Icons.list), onPressed: null),
-    this.labelOnTap,
-    this.leadingOnTap,
-    this.labelKey = 'label',
+    this.titleKey = 'title',
+    this.leadingKey = 'leading',
     this.expanedKey = 'expaned',
     this.childrenKey = 'children',
-    this.expanedIcon = const Icon(Icons.expand_more),
     this.offsetLeft = 24.0,
-  })  : assert(data != null),
-        assert(leading != null && leadingOnTap == null);
+    this.titleOnTap,
+    this.leadingOnTap,
+    this.trailingOnTap,
+  }) : assert(data != null);
 
-  TreeItem _itemFromMap(Map<String, dynamic> map) => TreeItem(
-        label: map[labelKey],
-        expaned: map[expanedKey],
-        children:
-            (map[childrenKey] as List).map((i) => _itemFromMap(i)).toList(),
-      );
+  List<TreeNode> _geneTreeNodes(List list) {
+    List treeNodes = <TreeNode>[];
+
+    for (int i = 0; i < list.length; i++) {
+      final Map<String, dynamic> item = list[i];
+      final title = item[titleKey] == null ? null : Text(item[titleKey]);
+      final leading = item[leadingKey] == null ? null : Text(item[leadingKey]);
+      final expaned = item[expanedKey] ?? false;
+      final children = item[childrenKey] as List;
+
+      treeNodes.add(TreeNode(
+        title: title,
+        leading: leading,
+        expaned: expaned,
+        offsetLeft: offsetLeft,
+        titleOnTap: titleOnTap,
+        leadingOnTap: leadingOnTap,
+        trailingOnTap: trailingOnTap,
+        children: _geneTreeNodes(children),
+      ));
+    }
+
+    return treeNodes;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<TreeItem> items = data.map((d) => _itemFromMap(d)).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(data.length, (int index) {
+        final Map<String, dynamic> item = data[index];
+        final title = item[titleKey] == null ? null : Text(item[titleKey]);
+        final leading =
+            item[leadingKey] == null ? null : Text(item[leadingKey]);
+        final expaned = item[expanedKey] ?? false;
+        final children = item[childrenKey] as List;
 
-    return ListView(
-      children: List.generate(items.length, (int index) {
         return TreeNode(
-          item: items[index],
-          level: 0,
+          title: title,
           leading: leading,
-          labelOnTap: labelOnTap,
-          leadingOnTap: leadingOnTap,
+          expaned: expaned,
           offsetLeft: offsetLeft,
-          expanedIcon: expanedIcon,
+          titleOnTap: titleOnTap,
+          leadingOnTap: leadingOnTap,
+          trailingOnTap: trailingOnTap,
+          children: _geneTreeNodes(children),
         );
       }),
     );

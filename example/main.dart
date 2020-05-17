@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tree/tree_view.dart';
+import 'package:flutter_tree/flutter_tree.dart';
 
-import 'items_data.dart';
+import 'tree_data.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,21 +12,49 @@ class MyApp extends StatelessWidget {
       title: 'Tree example',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: Text('Flutter tree example')),
+        appBar: AppBar(title: Text('Flutter Tree')),
         body: TreeView(
-          data: itemsData,
-          offsetLeft: 32.0,
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: () {
-              print('leading');
-            },
-          ),
-          expanedIcon: Icon(Icons.add),
-          labelOnTap: () {
-            print('label');
+          data: treeData,
+          titleOnTap: () {
+            print('title');
+          },
+          leadingOnTap: () {
+            print('leading');
+          },
+          trailingOnTap: () {
+            print('trailing');
           },
         ),
+
+        // body: TreeNode(
+        //   title: Text('This is a title!'),
+        //   children: [
+        //     TreeNode(
+        //       title: Text('This is a title!'),
+        //       children: <Widget>[
+        //         TreeNode(title: Text('This is a title!')),
+        //         TreeNode(
+        //           title: Text('This is a title!'),
+        //           children: <Widget>[
+        //             TreeNode(title: Text('This is a title!')),
+        //             TreeNode(title: Text('This is a title!')),
+        //             TreeNode(title: Text('This is a title!')),
+        //           ],
+        //         ),
+        //         TreeNode(title: Text('This is a title!')),
+        //         TreeNode(title: Text('This is a title!')),
+        //         TreeNode(
+        //           title: Text('This is a title!'),
+        //           children: <Widget>[
+        //             TreeNode(title: Text('This is a title!')),
+        //             TreeNode(title: Text('This is a title!')),
+        //             TreeNode(title: Text('This is a title!')),
+        //           ],
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }

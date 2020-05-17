@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tree/tree_item.dart';
 
 class TreeNode extends StatefulWidget {
-  final TreeItem item;
   final int level;
-
-  final Widget leading;
+  final bool expaned;
   final double offsetLeft;
-  final Widget expanedIcon;
+  final List<Widget> children;
 
-  final Function labelOnTap;
+  final Widget title;
+  final Widget leading;
+  final Widget trailing;
+
+  final Function titleOnTap;
   final Function leadingOnTap;
+  final Function trailingOnTap;
 
   const TreeNode({
-    @required this.item,
     this.level = 0,
-    this.leading = const IconButton(icon: Icon(Icons.list), onPressed: null),
-    this.labelOnTap,
-    this.leadingOnTap,
+    this.expaned = false,
     this.offsetLeft = 24.0,
-    this.expanedIcon = const Icon(Icons.expand_more),
-  })  : assert(item != null),
-        assert(leading != null && leadingOnTap == null);
+    this.children = const [],
+    this.title = const Text('Title'),
+    this.leading = const IconButton(
+      icon: Icon(Icons.star_border),
+      iconSize: 16,
+      onPressed: null,
+    ),
+    this.trailing = const IconButton(
+      icon: Icon(Icons.expand_more),
+      iconSize: 16,
+      onPressed: null,
+    ),
+    this.titleOnTap,
+    this.leadingOnTap,
+    this.trailingOnTap,
+  });
 
   @override
   _TreeNodeState createState() => _TreeNodeState();
@@ -35,84 +47,97 @@ class _TreeNodeState extends State<TreeNode>
   final Tween<double> _turnsTween = Tween<double>(begin: 0.0, end: -0.5);
 
   initState() {
-    _isExpaned = widget.item.expaned;
+    _isExpaned = widget.expaned;
     _rotationController = AnimationController(
-      vsync: this,
       duration: const Duration(milliseconds: 300),
+      vsync: this,
     );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final TreeItem item = widget.item;
-    final int level = widget.level;
-    final Widget leading = widget.leading;
-    final double offsetLeft = widget.offsetLeft;
-    final List<TreeItem> children = item.children;
-    final Widget expanedIcon = widget.expanedIcon;
-
-    final Function labelOnTap = widget.labelOnTap;
-    final Function leadingOnTap = widget.leadingOnTap;
+    final level = widget.level;
+    final children = widget.children;
+    final offsetLeft = widget.offsetLeft;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            if (leading != null)
-              leading
-            else
-              IconButton(
-                icon: Icon(Icons.list),
-                onPressed: leadingOnTap,
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  if (widget.leadingOnTap != null &&
+                      widget.leadingOnTap is Function) {
+                    widget.leadingOnTap();
+                  }
+                },
+                child: Center(
+                  child: widget.leading ??
+                      const IconButton(
+                        icon: Icon(Icons.star_border),
+                        iconSize: 16,
+                        onPressed: null,
+                      ),
+                ),
               ),
-            Expanded(
-              child: InkWell(
-                onTap: labelOnTap,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    item.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
+              SizedBox(width: 6.0),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    if (widget.titleOnTap != null &&
+                        widget.titleOnTap is Function) {
+                      widget.titleOnTap();
+                    }
+                  },
+                  child: widget.title ?? Container(),
+                ),
+              ),
+              SizedBox(width: 6.0),
+              Visibility(
+                visible: children.length > 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpaned = !_isExpaned;
+                        if (_isExpaned) {
+                          _rotationController.forward();
+                        } else {
+                          _rotationController.reverse();
+                        }
+                        if (widget.trailingOnTap != null &&
+                            widget.trailingOnTap is Function) {
+                          widget.trailingOnTap();
+                        }
+                      });
+                    },
+                    child: RotationTransition(
+                      child: widget.trailing ??
+                          const IconButton(
+                            icon: Icon(Icons.expand_more),
+                            iconSize: 16,
+                            onPressed: null,
+                          ),
+                      turns: _turnsTween.animate(_rotationController),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Visibility(
-              visible: children.length > 0,
-              child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isExpaned = !_isExpaned;
-                    if (_isExpaned) {
-                      _rotationController.forward();
-                    } else {
-                      _rotationController.reverse();
-                    }
-                  });
-                },
-                icon: RotationTransition(
-                  child: expanedIcon,
-                  turns: _turnsTween.animate(_rotationController),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         Visibility(
           visible: children.length > 0 && _isExpaned,
           child: Padding(
             padding: EdgeInsets.only(left: level + 1 * offsetLeft),
             child: Column(
-              children: List.generate(children.length, (int index) {
-                return TreeNode(
-                  item: children[index],
-                  leading: leading,
-                  offsetLeft: offsetLeft,
-                  expanedIcon: expanedIcon,
-                );
-              }),
+              children: widget.children,
+              crossAxisAlignment: CrossAxisAlignment.start,
             ),
           ),
         ),
