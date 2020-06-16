@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_tree/tree_view.dart';
+import 'package:flutter_tree/flutter_tree.dart';
 
 import '../example/tree_data.dart';
 

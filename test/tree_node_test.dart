@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_tree/tree_node.dart';
+import 'package:flutter_tree/flutter_tree.dart';
 
 MaterialApp myApp = MaterialApp(
   home: Scaffold(

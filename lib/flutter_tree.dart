@@ -1,4 +1,4 @@
 library flutter_tree;
 
-export 'tree_view.dart';
-export 'tree_node.dart';
+export 'src/tree_view.dart';
+export 'src/tree_node.dart';
