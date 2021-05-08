@@ -11,12 +11,12 @@ class TreeView extends StatelessWidget {
   final String childrenKey;
   final double offsetLeft;
 
-  final Function titleOnTap;
-  final Function leadingOnTap;
-  final Function trailingOnTap;
+  final Function? titleOnTap;
+  final Function? leadingOnTap;
+  final Function? trailingOnTap;
 
   const TreeView({
-    @required this.data,
+    required this.data,
     this.titleKey = 'title',
     this.leadingKey = 'leading',
     this.expanedKey = 'expaned',
@@ -49,7 +49,7 @@ class TreeView extends StatelessWidget {
       ));
     }
 
-    return treeNodes;
+    return treeNodes as List<TreeNode>;
   }
 
   @override
