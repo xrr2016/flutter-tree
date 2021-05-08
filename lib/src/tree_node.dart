@@ -6,13 +6,13 @@ class TreeNode extends StatefulWidget {
   final double offsetLeft;
   final List<Widget> children;
 
-  final Widget title;
-  final Widget leading;
-  final Widget trailing;
+  final Widget? title;
+  final Widget? leading;
+  final Widget? trailing;
 
-  final Function titleOnTap;
-  final Function leadingOnTap;
-  final Function trailingOnTap;
+  final Function? titleOnTap;
+  final Function? leadingOnTap;
+  final Function? trailingOnTap;
 
   const TreeNode({
     this.level = 0,
@@ -43,7 +43,7 @@ class _TreeNodeState extends State<TreeNode>
     with SingleTickerProviderStateMixin {
   bool _isExpaned = false;
 
-  AnimationController _rotationController;
+  late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: 0.0, end: -0.5);
 
   initState() {
@@ -73,7 +73,7 @@ class _TreeNodeState extends State<TreeNode>
                 onTap: () {
                   if (widget.leadingOnTap != null &&
                       widget.leadingOnTap is Function) {
-                    widget.leadingOnTap();
+                    widget.leadingOnTap!();
                   }
                 },
                 child: Center(
@@ -91,7 +91,7 @@ class _TreeNodeState extends State<TreeNode>
                   onTap: () {
                     if (widget.titleOnTap != null &&
                         widget.titleOnTap is Function) {
-                      widget.titleOnTap();
+                      widget.titleOnTap!();
                     }
                   },
                   child: widget.title ?? Container(),
@@ -112,7 +112,7 @@ class _TreeNodeState extends State<TreeNode>
                         }
                         if (widget.trailingOnTap != null &&
                             widget.trailingOnTap is Function) {
-                          widget.trailingOnTap();
+                          widget.trailingOnTap!();
                         }
                       });
                     },
