@@ -65,7 +65,8 @@ class _TreeNodeState extends State<TreeNode>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 12.0),
+          padding: const EdgeInsets.only(left: 12.0,
+                                         right: 12.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -134,7 +135,8 @@ class _TreeNodeState extends State<TreeNode>
         Visibility(
           visible: children.length > 0 && _isExpaned,
           child: Padding(
-            padding: EdgeInsets.only(left: level + 1 * offsetLeft),
+            padding: EdgeInsets.only(left: level + 1 * offsetLeft,
+                                     right: level + 1 * offsetLeft),
             child: Column(
               children: widget.children,
               crossAxisAlignment: CrossAxisAlignment.start,
