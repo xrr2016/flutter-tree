@@ -12,7 +12,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: const Text('Flutter Tree Demo')),
-        body: TreeView(data: treeData),
+        body: TreeView(
+          data: treeData,
+          onTap: (d) {
+            print(d);
+          },
+        ),
       ),
     );
   }
