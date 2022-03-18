@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tree/flutter_tree.dart';
 
-import 'tree_data.dart';
+import '../lib/flutter_tree.dart';
+import './tree_data.dart';
 
 void main() => runApp(MyApp());
 
