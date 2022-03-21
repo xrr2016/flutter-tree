@@ -10,17 +10,5 @@
       "type": "dart",
       "program": "example/main.dart",
     },
-    {
-      "name": "flutter-tree (profile mode)",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "flutter-tree (release mode)",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "release"
-    }
   ]
 }

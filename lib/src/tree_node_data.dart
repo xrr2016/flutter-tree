@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 
 class TreeNodeData {
-  int? level;
-  double? offset;
-  Widget? icon;
-  Widget? trailing;
-  String? title;
-  bool? expaned;
+  String title;
+  bool expaned;
+  List<TreeNodeData> children;
   dynamic extra;
-  List<TreeNodeData>? children;
-  Function(TreeNodeData)? onTap;
+  UniqueKey? key;
 
   TreeNodeData({
-    this.onTap,
-    this.title,
-    this.offset,
-    this.level,
-    this.expaned,
-    this.children,
-    this.icon,
-    this.trailing,
+    required this.title,
+    required this.expaned,
+    required this.children,
+    this.key,
     this.extra,
-  });
+  }) {
+    key = UniqueKey();
+  }
 }

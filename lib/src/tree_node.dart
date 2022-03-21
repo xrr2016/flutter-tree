@@ -1,22 +1,46 @@
 import 'package:flutter/material.dart';
 
-import './tree_node_data.dart';
+import '../flutter_tree.dart';
 
 class TreeNode extends StatefulWidget {
   final TreeNodeData data;
-
+  final TreeNodeData parent;
+  final bool? lazy;
   final Widget? icon;
-  final Function? onTap;
-  final double? offsetLeft;
   final bool? showCheckBox;
+  final double? offsetLeft;
+
+  final Function(TreeNodeData node)? onTap;
+  final void Function(bool checked, TreeNodeData node)? onCheck;
+
+  final void Function(TreeNodeData node)? onExpand;
+  final void Function(TreeNodeData node)? onCollapse;
+
+  final List<TreeNodeData> Function(TreeNodeData node)? load;
+
+  final void Function(TreeNodeData node) remove;
+  final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
+
+  final TreeNodeData Function()? onAppend;
+  final void Function(TreeNodeData node, List<TreeNodeData> children) append;
 
   const TreeNode({
     Key? key,
     required this.data,
+    required this.parent,
+    required this.remove,
+    required this.append,
     this.onTap,
-    this.offsetLeft = 20.0,
-    this.showCheckBox = false,
-    this.icon = const Icon(Icons.expand_more, size: 20.0),
+    this.onCheck,
+    this.onExpand,
+    this.onAppend,
+    this.onRemove,
+    this.onCollapse,
+    this.offsetLeft,
+    this.showCheckBox,
+    this.icon,
+    this.lazy,
+    this.load,
   }) : super(key: key);
 
   @override
@@ -28,110 +52,125 @@ class _TreeNodeState extends State<TreeNode>
   bool _isExpaned = false;
   bool _isChecked = false;
   late AnimationController _rotationController;
-  final Tween<double> _turnsTween = Tween<double>(begin: 0.0, end: -0.25);
+  final Tween<double> _turnsTween = Tween<double>(begin: -0.25, end: 0.0);
 
   List<TreeNode> _geneTreeNodes(List list) {
     return List.generate(list.length, (int index) {
-      return TreeNode(data: list[index]);
+      return TreeNode(
+        data: list[index],
+        remove: widget.remove,
+        append: widget.append,
+        parent: widget.data,
+        icon: widget.icon,
+        lazy: widget.lazy,
+        load: widget.load,
+        offsetLeft: widget.offsetLeft,
+        showCheckBox: widget.showCheckBox,
+        onTap: widget.onTap,
+        onCheck: widget.onCheck,
+        onExpand: widget.onExpand,
+        onCollapse: widget.onCollapse,
+        onRemove: widget.onRemove,
+        onAppend: widget.onAppend,
+      );
     });
   }
 
   @override
   initState() {
     super.initState();
-    _isExpaned = widget.data.expaned!;
+    _isExpaned = widget.data.expaned;
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    if (_isExpaned) {
+      _rotationController.forward();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragStart: (details) {
-        print(details);
-      },
-      onVerticalDragUpdate: (details) {},
-      onVerticalDragEnd: (details) {},
-      onVerticalDragCancel: () {},
-      onVerticalDragDown: (details) {},
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              if (widget.data.children.isNotEmpty)
                 RotationTransition(
                   child: IconButton(
-                    // splashRadius: 10.0,
-                    // constraints: BoxConstraints(
-                    //   maxHeight: 20.0,
-                    //   maxWidth: 20.0,
-                    //   minHeight: 20.0,
-                    //   minWidth: 20.0,
-                    // ),
-                    icon: widget.data.icon!,
-                    padding: const EdgeInsets.all(0.0),
                     iconSize: 16,
+                    icon: widget.icon!,
                     onPressed: () {
-                      widget.data.onTap!(widget.data);
+                      widget.onTap!(widget.data);
                       setState(() {
                         _isExpaned = !_isExpaned;
                         if (_isExpaned) {
+                          widget.onExpand!(widget.data);
                           _rotationController.forward();
                         } else {
+                          widget.onCollapse!(widget.data);
                           _rotationController.reverse();
                         }
                       });
                     },
                   ),
                   turns: _turnsTween.animate(_rotationController),
+                )
+              else
+                const SizedBox(width: 40.0),
+              if (widget.showCheckBox!)
+                Checkbox(
+                  value: _isChecked,
+                  checkColor: Colors.white,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isChecked = value!;
+                      widget.onCheck!(_isChecked, widget.data);
+                    });
+                  },
                 ),
-                if (widget.showCheckBox!)
-                  Checkbox(
-                    checkColor: Colors.white,
-                    value: _isChecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _isChecked = value!;
-                      });
-                    },
-                  ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      if (widget.data.onTap != null &&
-                          widget.data.onTap is Function) {
-                        widget.data.onTap!(widget.data);
-                      }
-                    },
-                    child: widget.data.title != null
-                        ? Container(
-                            color: Colors.amber,
-                            child: Text(widget.data.title!),
-                          )
-                        : const SizedBox.shrink(),
+              Expanded(child: Text(widget.data.title)),
+              const SizedBox(width: 6.0),
+              TextButton(
+                onPressed: () {
+                  widget.append(widget.onAppend!(), widget.data.children);
+                },
+                child: Text(
+                  '添加',
+                  style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
                   ),
                 ),
-                const SizedBox(width: 6.0),
-                widget.data.trailing!,
-              ],
-            ),
-          ),
-          Visibility(
-            visible: widget.data.children!.isNotEmpty && _isExpaned,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: (widget.data.level! + 1) * widget.data.offset!,
               ),
-              child: Column(children: _geneTreeNodes(widget.data.children!)),
-            ),
+              TextButton(
+                onPressed: () {
+                  widget.remove(widget.data);
+                  widget.onRemove!(widget.data, widget.parent);
+                },
+                child: Text(
+                  '删除',
+                  style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        SizeTransition(
+          sizeFactor: _rotationController,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: widget.offsetLeft!,
+            ),
+            child: Column(children: _geneTreeNodes(widget.data.children)),
+          ),
+        )
+      ],
     );
   }
 }
