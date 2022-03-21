@@ -18,7 +18,8 @@ class TreeView extends StatefulWidget {
   final List<TreeNodeData> Function(TreeNodeData node)? load;
   final void Function(bool checked, TreeNodeData node)? onCheck;
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
-  final TreeNodeData Function()? onAppend;
+  final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
+  final TreeNodeData Function(TreeNodeData parent)? append;
 
   const TreeView({
     Key? key,
@@ -29,6 +30,7 @@ class TreeView extends StatefulWidget {
     this.onCollapse,
     this.onAppend,
     this.onRemove,
+    this.append,
     this.load,
     this.lazy = false,
     this.offsetLeft = 24.0,
@@ -58,8 +60,8 @@ class _TreeViewState extends State<TreeView> {
     setState(() {});
   }
 
-  void append(TreeNodeData node, List<TreeNodeData> children) {
-    children.add(node);
+  void append(TreeNodeData parent) {
+    parent.children.add(widget.append!(parent));
     setState(() {});
   }
 

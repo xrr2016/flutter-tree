@@ -21,8 +21,8 @@ class TreeNode extends StatefulWidget {
   final void Function(TreeNodeData node) remove;
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
 
-  final TreeNodeData Function()? onAppend;
-  final void Function(TreeNodeData node, List<TreeNodeData> children) append;
+  final void Function(TreeNodeData node) append;
+  final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
 
   const TreeNode({
     Key? key,
@@ -137,7 +137,8 @@ class _TreeNodeState extends State<TreeNode>
               const SizedBox(width: 6.0),
               TextButton(
                 onPressed: () {
-                  widget.append(widget.onAppend!(), widget.data.children);
+                  widget.append(widget.data);
+                  widget.onAppend!(widget.data, widget.parent);
                 },
                 child: Text(
                   '添加',
