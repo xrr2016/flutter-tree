@@ -5,42 +5,45 @@ import '../flutter_tree.dart';
 class TreeNode extends StatefulWidget {
   final TreeNodeData data;
   final TreeNodeData parent;
-  final bool? lazy;
-  final Widget? icon;
-  final bool? showCheckBox;
-  final double? offsetLeft;
 
-  final Function(TreeNodeData node)? onTap;
-  final void Function(bool checked, TreeNodeData node)? onCheck;
+  final bool lazy;
+  final Widget icon;
+  final bool showCheckBox;
+  final bool showActions;
+  final double offsetLeft;
 
-  final void Function(TreeNodeData node)? onExpand;
-  final void Function(TreeNodeData node)? onCollapse;
+  final Function(TreeNodeData node) onTap;
+  final void Function(bool checked, TreeNodeData node) onCheck;
 
-  final Future Function(TreeNodeData node)? load;
+  final void Function(TreeNodeData node) onExpand;
+  final void Function(TreeNodeData node) onCollapse;
+
+  final Future Function(TreeNodeData node) load;
 
   final void Function(TreeNodeData node) remove;
-  final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
+  final void Function(TreeNodeData node, TreeNodeData parent) onRemove;
 
   final void Function(TreeNodeData node) append;
-  final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
+  final void Function(TreeNodeData node, TreeNodeData parent) onAppend;
 
   const TreeNode({
     Key? key,
     required this.data,
     required this.parent,
-    required this.remove,
+    required this.offsetLeft,
+    required this.showCheckBox,
+    required this.showActions,
+    required this.icon,
+    required this.lazy,
+    required this.load,
     required this.append,
-    this.onTap,
-    this.onCheck,
-    this.onExpand,
-    this.onAppend,
-    this.onRemove,
-    this.onCollapse,
-    this.offsetLeft,
-    this.showCheckBox,
-    this.icon,
-    this.lazy,
-    this.load,
+    required this.remove,
+    required this.onTap,
+    required this.onCheck,
+    required this.onExpand,
+    required this.onAppend,
+    required this.onRemove,
+    required this.onCollapse,
   }) : super(key: key);
 
   @override
@@ -67,6 +70,7 @@ class _TreeNodeState extends State<TreeNode>
         load: widget.load,
         offsetLeft: widget.offsetLeft,
         showCheckBox: widget.showCheckBox,
+        showActions: widget.showActions,
         onTap: widget.onTap,
         onCheck: widget.onCheck,
         onExpand: widget.onExpand,
@@ -109,33 +113,32 @@ class _TreeNodeState extends State<TreeNode>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (widget.data.children.isNotEmpty || widget.lazy!)
+              if (widget.data.children.isNotEmpty || widget.lazy)
                 RotationTransition(
                   child: IconButton(
                     iconSize: 16,
-                    icon: widget.icon!,
+                    icon: widget.icon,
                     onPressed: () {
-                      widget.onTap!(widget.data);
+                      widget.onTap(widget.data);
 
-                      if (widget.lazy! && widget.data.children.isEmpty) {
+                      if (widget.lazy && widget.data.children.isEmpty) {
                         setState(() {
                           _showLoading = true;
                         });
-                        widget.load!(widget.data).then((value) {
-                          print(value);
+                        widget.load(widget.data).then((value) {
                           _showLoading = false;
                           _isExpaned = true;
                           _rotationController.forward();
-                          widget.onExpand!(widget.data);
+                          widget.onExpand(widget.data);
                           setState(() {});
                         });
                       } else {
                         _isExpaned = !_isExpaned;
                         if (_isExpaned) {
-                          widget.onExpand!(widget.data);
+                          widget.onExpand(widget.data);
                           _rotationController.forward();
                         } else {
-                          widget.onCollapse!(widget.data);
+                          widget.onCollapse(widget.data);
                           _rotationController.reverse();
                         }
                         setState(() {});
@@ -146,18 +149,18 @@ class _TreeNodeState extends State<TreeNode>
                 )
               else
                 const SizedBox(width: 40.0),
-              if (widget.showCheckBox!)
+              if (widget.showCheckBox)
                 Checkbox(
                   value: _isChecked,
                   checkColor: Colors.white,
                   onChanged: (bool? value) {
                     setState(() {
                       _isChecked = value!;
-                      widget.onCheck!(_isChecked, widget.data);
+                      widget.onCheck(_isChecked, widget.data);
                     });
                   },
                 ),
-              if (widget.lazy! && _showLoading)
+              if (widget.lazy && _showLoading)
                 const SizedBox(
                   width: 12.0,
                   height: 12.0,
@@ -171,7 +174,7 @@ class _TreeNodeState extends State<TreeNode>
               TextButton(
                 onPressed: () {
                   widget.append(widget.data);
-                  widget.onAppend!(widget.data, widget.parent);
+                  widget.onAppend(widget.data, widget.parent);
                 },
                 child: Text(
                   '添加',
@@ -183,7 +186,7 @@ class _TreeNodeState extends State<TreeNode>
               TextButton(
                 onPressed: () {
                   widget.remove(widget.data);
-                  widget.onRemove!(widget.data, widget.parent);
+                  widget.onRemove(widget.data, widget.parent);
                 },
                 child: Text(
                   '删除',
@@ -199,7 +202,7 @@ class _TreeNodeState extends State<TreeNode>
           sizeFactor: _rotationController,
           child: Padding(
             padding: EdgeInsets.only(
-              left: widget.offsetLeft!,
+              left: widget.offsetLeft,
             ),
             child: Column(children: _geneTreeNodes(widget.data.children)),
           ),

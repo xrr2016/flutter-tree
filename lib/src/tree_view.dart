@@ -10,16 +10,18 @@ class TreeView extends StatefulWidget {
   final Widget icon;
   final bool showFilter;
   final bool showCheckBox;
+  final bool showActions;
   final double offsetLeft;
 
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onExpand;
   final void Function(TreeNodeData node)? onCollapse;
-  final TreeNodeData Function(TreeNodeData parent)? append;
   final void Function(bool checked, TreeNodeData node)? onCheck;
-  final Future<List<TreeNodeData>> Function(TreeNodeData node)? load;
   final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
+
+  final TreeNodeData Function(TreeNodeData parent)? append;
+  final Future<List<TreeNodeData>> Function(TreeNodeData node)? load;
 
   const TreeView({
     Key? key,
@@ -34,8 +36,9 @@ class TreeView extends StatefulWidget {
     this.load,
     this.lazy = false,
     this.offsetLeft = 24.0,
-    this.showCheckBox = false,
     this.showFilter = false,
+    this.showActions = false,
+    this.showCheckBox = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
   }) : super(key: key);
 
@@ -47,15 +50,22 @@ class _TreeViewState extends State<TreeView> {
   late TreeNodeData _root;
   List<TreeNodeData> _renderList = [];
 
-  void _filterRenderList(String val) {
-    if (val.isNotEmpty) {
-      List<TreeNodeData> list = [];
-      for (var i = 0; i < widget.data.length; i++) {
-        if (widget.data[i].title.contains(val)) {
-          list.add(widget.data[i]);
-        }
+  List<TreeNodeData> _filter(String val, List<TreeNodeData> list) {
+    List<TreeNodeData> temp = [];
+    for (int i = 0; i < list.length; i++) {
+      if (list[i].title.contains(val)) {
+        temp.add(list[i]);
       }
-      _renderList = list;
+      if (list[i].children.isNotEmpty) {
+        list[i].children = _filter(val, list[i].children);
+      }
+    }
+    return temp;
+  }
+
+  void _onChange(String val) {
+    if (val.isNotEmpty) {
+      _renderList = _filter(val, _renderList);
     } else {
       _renderList = widget.data;
     }
@@ -110,27 +120,31 @@ class _TreeViewState extends State<TreeView> {
           if (widget.showFilter)
             Padding(
               padding: const EdgeInsets.only(left: 24.0, right: 24.0),
-              child: TextField(onChanged: _filterRenderList),
+              child: TextField(onChanged: _onChange),
             ),
-          ...List.generate(_renderList.length, (int index) {
-            return TreeNode(
-              parent: _root,
-              data: _renderList[index],
-              icon: widget.icon,
-              lazy: widget.lazy,
-              offsetLeft: widget.offsetLeft,
-              onCollapse: widget.onCollapse,
-              showCheckBox: widget.showCheckBox,
-              onTap: widget.onTap,
-              onCheck: widget.onCheck,
-              onExpand: widget.onExpand,
-              onRemove: widget.onRemove,
-              onAppend: widget.onAppend,
-              load: load,
-              remove: remove,
-              append: append,
-            );
-          })
+          ...List.generate(
+            _renderList.length,
+            (int index) {
+              return TreeNode(
+                load: load,
+                remove: remove,
+                append: append,
+                parent: _root,
+                data: _renderList[index],
+                icon: widget.icon,
+                lazy: widget.lazy,
+                offsetLeft: widget.offsetLeft,
+                showCheckBox: widget.showCheckBox,
+                showActions: widget.showActions,
+                onTap: widget.onTap ?? (n) {},
+                onCheck: widget.onCheck ?? (b, n) {},
+                onExpand: widget.onExpand ?? (n) {},
+                onRemove: widget.onRemove ?? (n, p) {},
+                onAppend: widget.onAppend ?? (n, p) {},
+                onCollapse: widget.onCollapse ?? (n) {},
+              );
+            },
+          )
         ],
       ),
     );
