@@ -8,10 +8,10 @@ class TreeView extends StatefulWidget {
 
   final bool lazy;
   final Widget icon;
-  final bool showFilter;
-  final bool showCheckBox;
-  final bool showActions;
   final double offsetLeft;
+  final bool showFilter;
+  final bool showActions;
+  final bool showCheckBox;
 
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onExpand;
