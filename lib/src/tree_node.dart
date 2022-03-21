@@ -16,7 +16,7 @@ class TreeNode extends StatefulWidget {
   final void Function(TreeNodeData node)? onExpand;
   final void Function(TreeNodeData node)? onCollapse;
 
-  final List<TreeNodeData> Function(TreeNodeData node)? load;
+  final Future Function(TreeNodeData node)? load;
 
   final void Function(TreeNodeData node) remove;
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
@@ -51,6 +51,7 @@ class _TreeNodeState extends State<TreeNode>
     with SingleTickerProviderStateMixin {
   bool _isExpaned = false;
   bool _isChecked = false;
+  bool _showLoading = false;
   late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: -0.25, end: 0.0);
 
@@ -83,7 +84,16 @@ class _TreeNodeState extends State<TreeNode>
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          // _showLoading = false;
+        } else if (status == AnimationStatus.forward) {
+          // _showLoading = true;
+        } else if (status == AnimationStatus.reverse) {
+          // _showLoading = false;
+        }
+        // setState(() {});
+      });
     if (_isExpaned) {
       _rotationController.forward();
     }
@@ -99,14 +109,27 @@ class _TreeNodeState extends State<TreeNode>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (widget.data.children.isNotEmpty)
+              if (widget.data.children.isNotEmpty || widget.lazy!)
                 RotationTransition(
                   child: IconButton(
                     iconSize: 16,
                     icon: widget.icon!,
                     onPressed: () {
                       widget.onTap!(widget.data);
-                      setState(() {
+
+                      if (widget.lazy! && widget.data.children.isEmpty) {
+                        setState(() {
+                          _showLoading = true;
+                        });
+                        widget.load!(widget.data).then((value) {
+                          print(value);
+                          _showLoading = false;
+                          _isExpaned = true;
+                          _rotationController.forward();
+                          widget.onExpand!(widget.data);
+                          setState(() {});
+                        });
+                      } else {
                         _isExpaned = !_isExpaned;
                         if (_isExpaned) {
                           widget.onExpand!(widget.data);
@@ -115,7 +138,8 @@ class _TreeNodeState extends State<TreeNode>
                           widget.onCollapse!(widget.data);
                           _rotationController.reverse();
                         }
-                      });
+                        setState(() {});
+                      }
                     },
                   ),
                   turns: _turnsTween.animate(_rotationController),
@@ -133,6 +157,15 @@ class _TreeNodeState extends State<TreeNode>
                     });
                   },
                 ),
+              if (widget.lazy! && _showLoading)
+                const SizedBox(
+                  width: 12.0,
+                  height: 12.0,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.0,
+                  ),
+                ),
+              const SizedBox(width: 6.0),
               Expanded(child: Text(widget.data.title)),
               const SizedBox(width: 6.0),
               TextButton(

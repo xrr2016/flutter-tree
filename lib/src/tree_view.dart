@@ -15,11 +15,11 @@ class TreeView extends StatefulWidget {
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onExpand;
   final void Function(TreeNodeData node)? onCollapse;
-  final List<TreeNodeData> Function(TreeNodeData node)? load;
-  final void Function(bool checked, TreeNodeData node)? onCheck;
-  final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
-  final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
   final TreeNodeData Function(TreeNodeData parent)? append;
+  final void Function(bool checked, TreeNodeData node)? onCheck;
+  final Future<List<TreeNodeData>> Function(TreeNodeData node)? load;
+  final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
+  final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
 
   const TreeView({
     Key? key,
@@ -49,14 +49,16 @@ class _TreeViewState extends State<TreeView> {
 
   void _filterRenderList(String val) {
     if (val.isNotEmpty) {
-      _renderList = _renderList
-          .takeWhile((TreeNodeData item) => item.title.indexOf(val) > 0)
-          .toList();
-      print(_renderList);
+      List<TreeNodeData> list = [];
+      for (var i = 0; i < widget.data.length; i++) {
+        if (widget.data[i].title.contains(val)) {
+          list.add(widget.data[i]);
+        }
+      }
+      _renderList = list;
     } else {
       _renderList = widget.data;
     }
-
     setState(() {});
   }
 
@@ -80,6 +82,13 @@ class _TreeViewState extends State<TreeView> {
     setState(() {});
   }
 
+  Future load(TreeNodeData node) async {
+    final data = await widget.load!(node);
+    node.children = data;
+    setState(() {});
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +96,7 @@ class _TreeViewState extends State<TreeView> {
     _root = TreeNodeData(
       title: '',
       extra: null,
+      checked: false,
       expaned: false,
       children: _renderList,
     );
@@ -108,7 +118,6 @@ class _TreeViewState extends State<TreeView> {
               data: _renderList[index],
               icon: widget.icon,
               lazy: widget.lazy,
-              load: widget.load,
               offsetLeft: widget.offsetLeft,
               onCollapse: widget.onCollapse,
               showCheckBox: widget.showCheckBox,
@@ -117,6 +126,7 @@ class _TreeViewState extends State<TreeView> {
               onExpand: widget.onExpand,
               onRemove: widget.onRemove,
               onAppend: widget.onAppend,
+              load: load,
               remove: remove,
               append: append,
             );
