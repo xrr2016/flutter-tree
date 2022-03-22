@@ -1,6 +1,6 @@
 name: flutter_tree
 description: Flutter tree widget plugin, you can use this plugin to show a tree like layout, some thing a department tree.
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/xrr2016/flutter_tree
 
 environment:

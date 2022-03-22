@@ -1,3 +1,7 @@
+## [2.0.1] - 2022.03.22
+
+*  Add online example.
+
 ## [2.0.0] - 2022.03.22
 
 * New version 2.0.0 release! 🎉
