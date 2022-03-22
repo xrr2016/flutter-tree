@@ -62,9 +62,9 @@ class _TreeNodeState extends State<TreeNode>
     return List.generate(list.length, (int index) {
       return TreeNode(
         data: list[index],
+        parent: widget.data,
         remove: widget.remove,
         append: widget.append,
-        parent: widget.data,
         icon: widget.icon,
         lazy: widget.lazy,
         load: widget.load,
@@ -113,87 +113,86 @@ class _TreeNodeState extends State<TreeNode>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (widget.data.children.isNotEmpty || widget.lazy)
-                RotationTransition(
-                  child: IconButton(
-                    iconSize: 16,
-                    icon: widget.icon,
-                    onPressed: () {
-                      widget.onTap(widget.data);
+              RotationTransition(
+                child: IconButton(
+                  iconSize: 16,
+                  icon: widget.icon,
+                  onPressed: () {
+                    widget.onTap(widget.data);
 
-                      if (widget.lazy && widget.data.children.isEmpty) {
-                        setState(() {
-                          _showLoading = true;
-                        });
-                        widget.load(widget.data).then((value) {
-                          _showLoading = false;
-                          _isExpaned = true;
-                          _rotationController.forward();
-                          widget.onExpand(widget.data);
-                          setState(() {});
-                        });
-                      } else {
-                        _isExpaned = !_isExpaned;
-                        if (_isExpaned) {
-                          widget.onExpand(widget.data);
-                          _rotationController.forward();
-                        } else {
-                          widget.onCollapse(widget.data);
-                          _rotationController.reverse();
-                        }
+                    if (widget.lazy && widget.data.children.isEmpty) {
+                      setState(() {
+                        _showLoading = true;
+                      });
+                      widget.load(widget.data).then((value) {
+                        _showLoading = false;
+                        _isExpaned = true;
+                        _rotationController.forward();
+                        widget.onExpand(widget.data);
                         setState(() {});
+                      });
+                    } else {
+                      _isExpaned = !_isExpaned;
+                      if (_isExpaned) {
+                        widget.onExpand(widget.data);
+                        _rotationController.forward();
+                      } else {
+                        widget.onCollapse(widget.data);
+                        _rotationController.reverse();
                       }
-                    },
-                  ),
-                  turns: _turnsTween.animate(_rotationController),
-                )
-              else
-                const SizedBox(width: 40.0),
+                      setState(() {});
+                    }
+                  },
+                ),
+                turns: _turnsTween.animate(_rotationController),
+              ),
               if (widget.showCheckBox)
                 Checkbox(
                   value: _isChecked,
-                  checkColor: Colors.white,
                   onChanged: (bool? value) {
-                    setState(() {
-                      _isChecked = value!;
-                      widget.onCheck(_isChecked, widget.data);
-                    });
+                    _isChecked = value!;
+                    widget.onCheck(_isChecked, widget.data);
+                    setState(() {});
                   },
                 ),
               if (widget.lazy && _showLoading)
                 const SizedBox(
                   width: 12.0,
                   height: 12.0,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 1.0,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 1.0),
                 ),
               const SizedBox(width: 6.0),
               Expanded(child: Text(widget.data.title)),
               const SizedBox(width: 6.0),
-              TextButton(
-                onPressed: () {
-                  widget.append(widget.data);
-                  widget.onAppend(widget.data, widget.parent);
-                },
-                child: Text(
-                  '添加',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
+              ButtonBar(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      widget.append(widget.data);
+                      widget.onAppend(widget.data, widget.parent);
+                    },
+                    child: Text(
+                      '添加',
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.labelSmall?.fontSize,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  widget.remove(widget.data);
-                  widget.onRemove(widget.data, widget.parent);
-                },
-                child: Text(
-                  '删除',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
+                  TextButton(
+                    onPressed: () {
+                      widget.remove(widget.data);
+                      widget.onRemove(widget.data, widget.parent);
+                    },
+                    child: Text(
+                      '删除',
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.labelSmall?.fontSize,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -201,9 +200,7 @@ class _TreeNodeState extends State<TreeNode>
         SizeTransition(
           sizeFactor: _rotationController,
           child: Padding(
-            padding: EdgeInsets.only(
-              left: widget.offsetLeft,
-            ),
+            padding: EdgeInsets.only(left: widget.offsetLeft),
             child: Column(children: _geneTreeNodes(widget.data.children)),
           ),
         )
