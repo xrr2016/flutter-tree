@@ -40,9 +40,46 @@ class MyApp extends StatelessWidget {
           data: treeData,
           lazy: true,
           load: _load,
+          showActions: true,
+          showCheckBox: true,
+          showFilter: true,
+          append: (parent) {
+            print(parent.extra);
+            return TreeNodeData(
+              title: 'Appended',
+              expaned: true,
+              checked: true,
+              children: [],
+            );
+          },
           onLoad: (node) {
             print('onLoad');
-            print(node.extra);
+            print(node);
+          },
+          onAppend: (node, parent) {
+            print('onAppend');
+            print(node);
+          },
+          onCheck: (checked, node) {
+            print('checked');
+            print('onCheck');
+            print(node);
+          },
+          onCollapse: (node) {
+            print('onCollapse');
+            print(node);
+          },
+          onExpand: (node) {
+            print('onExpand');
+            print(node);
+          },
+          onRemove: (node, parent) {
+            print('onRemove');
+            print(node);
+          },
+          onTap: (node) {
+            print('onTap');
+            print(node);
           },
         ),
       ),
