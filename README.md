@@ -243,3 +243,7 @@ TreeView(
 
 [MIT](./LICENSE)
 
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/xrr2016/flutter-tree.svg)](https://starchart.cc/xrr2016/flutter-tree)
