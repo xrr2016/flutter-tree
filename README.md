@@ -1,6 +1,6 @@
 # Flutter Tree
 
-[![GitHub stars](https://img.shields.io/github/stars/xrr2016/flutter_tree)](https://github.com/xrr2016/flutter_tree/stargazers) [![pub package](https://img.shields.io/pub/v/flutter_tree.svg)](https://pub.dev/packages/flutter_tree) ![test](https://github.com/xrr2016/flutter_tree/workflows/widget%20test/badge.svg)
+[![GitHub stars](https://img.shields.io/github/stars/xrr2016/flutter_tree)](https://github.com/xrr2016/flutter_tree/stargazers) [![pub package](https://img.shields.io/pub/v/flutter_tree.svg)](https://pub.dev/packages/flutter_tree) [![Run Test](https://github.com/xrr2016/flutter-tree/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/xrr2016/flutter-tree/actions/workflows/main.yml)
 
 
 [Version1](./readme.v1.md)
