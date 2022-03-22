@@ -231,6 +231,11 @@ TreeView(
 | append       |              `Function(TreeNodeData)`               |       `null`        | Append node data function | `false`  |
 | load         | `Future<List<TreeNodeData>> Function(TreeNodeData)` |       `null`        |  Load node data function  | `false`  |
 
+## TODO
+
+- [ ] Draggable tree
+- [ ] Custom filter function
+
 ## Contribute
 
 1. Fork it (https://github.com/xrr2016/flutter_tree.git)
