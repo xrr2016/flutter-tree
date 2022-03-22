@@ -14,6 +14,7 @@ class TreeView extends StatefulWidget {
   final bool showCheckBox;
 
   final Function(TreeNodeData node)? onTap;
+  final void Function(TreeNodeData node)? onLoad;
   final void Function(TreeNodeData node)? onExpand;
   final void Function(TreeNodeData node)? onCollapse;
   final void Function(bool checked, TreeNodeData node)? onCheck;
@@ -21,13 +22,14 @@ class TreeView extends StatefulWidget {
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
 
   final TreeNodeData Function(TreeNodeData parent)? append;
-  final Future<List<TreeNodeData>> Function(TreeNodeData node)? load;
+  final Future<List<TreeNodeData>> Function(TreeNodeData parent)? load;
 
   const TreeView({
     Key? key,
     required this.data,
     this.onTap,
     this.onCheck,
+    this.onLoad,
     this.onExpand,
     this.onCollapse,
     this.onAppend,
@@ -92,11 +94,16 @@ class _TreeViewState extends State<TreeView> {
     setState(() {});
   }
 
-  Future load(TreeNodeData node) async {
-    final data = await widget.load!(node);
-    node.children = data;
-    setState(() {});
-    return true;
+  Future<bool> load(TreeNodeData node) async {
+    try {
+      final data = await widget.load!(node);
+      node.children = data;
+      setState(() {});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   @override
@@ -141,6 +148,7 @@ class _TreeViewState extends State<TreeView> {
                 showCheckBox: widget.showCheckBox,
                 showActions: widget.showActions,
                 onTap: widget.onTap ?? (n) {},
+                onLoad: widget.onLoad ?? (n) {},
                 onCheck: widget.onCheck ?? (b, n) {},
                 onExpand: widget.onExpand ?? (n) {},
                 onRemove: widget.onRemove ?? (n, p) {},

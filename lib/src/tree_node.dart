@@ -19,6 +19,7 @@ class TreeNode extends StatefulWidget {
   final void Function(TreeNodeData node) onCollapse;
 
   final Future Function(TreeNodeData node) load;
+  final void Function(TreeNodeData node) onLoad;
 
   final void Function(TreeNodeData node) remove;
   final void Function(TreeNodeData node, TreeNodeData parent) onRemove;
@@ -40,6 +41,7 @@ class TreeNode extends StatefulWidget {
     required this.remove,
     required this.onTap,
     required this.onCheck,
+    required this.onLoad,
     required this.onExpand,
     required this.onAppend,
     required this.onRemove,
@@ -74,6 +76,7 @@ class _TreeNodeState extends State<TreeNode>
         onTap: widget.onTap,
         onCheck: widget.onCheck,
         onExpand: widget.onExpand,
+        onLoad: widget.onLoad,
         onCollapse: widget.onCollapse,
         onRemove: widget.onRemove,
         onAppend: widget.onAppend,
@@ -85,18 +88,16 @@ class _TreeNodeState extends State<TreeNode>
   initState() {
     super.initState();
     _isExpaned = widget.data.expaned;
+    _isChecked = widget.data.checked;
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          // _showLoading = false;
-        } else if (status == AnimationStatus.forward) {
-          // _showLoading = true;
+          widget.onExpand(widget.data);
         } else if (status == AnimationStatus.reverse) {
-          // _showLoading = false;
+          widget.onCollapse(widget.data);
         }
-        // setState(() {});
       });
     if (_isExpaned) {
       _rotationController.forward();
@@ -125,19 +126,19 @@ class _TreeNodeState extends State<TreeNode>
                         _showLoading = true;
                       });
                       widget.load(widget.data).then((value) {
+                        if (value) {
+                          _isExpaned = true;
+                          _rotationController.forward();
+                          widget.onLoad(widget.data);
+                        }
                         _showLoading = false;
-                        _isExpaned = true;
-                        _rotationController.forward();
-                        widget.onExpand(widget.data);
                         setState(() {});
                       });
                     } else {
                       _isExpaned = !_isExpaned;
                       if (_isExpaned) {
-                        widget.onExpand(widget.data);
                         _rotationController.forward();
                       } else {
-                        widget.onCollapse(widget.data);
                         _rotationController.reverse();
                       }
                       setState(() {});
@@ -161,39 +162,43 @@ class _TreeNodeState extends State<TreeNode>
                   height: 12.0,
                   child: CircularProgressIndicator(strokeWidth: 1.0),
                 ),
-              const SizedBox(width: 6.0),
-              Expanded(child: Text(widget.data.title)),
-              const SizedBox(width: 6.0),
-              ButtonBar(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      widget.append(widget.data);
-                      widget.onAppend(widget.data, widget.parent);
-                    },
-                    child: Text(
-                      '添加',
-                      style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.labelSmall?.fontSize,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      widget.remove(widget.data);
-                      widget.onRemove(widget.data, widget.parent);
-                    },
-                    child: Text(
-                      '删除',
-                      style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.labelSmall?.fontSize,
-                      ),
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                  child: Text(widget.data.title),
+                ),
               ),
+              if (widget.showActions)
+                ButtonBar(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        widget.append(widget.data);
+                        widget.onAppend(widget.data, widget.parent);
+                      },
+                      child: Text(
+                        '添加',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.labelSmall?.fontSize,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        widget.remove(widget.data);
+                        widget.onRemove(widget.data, widget.parent);
+                      },
+                      child: Text(
+                        '删除',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).textTheme.labelSmall?.fontSize,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

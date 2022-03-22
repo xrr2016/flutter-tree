@@ -1,11 +1,19 @@
 import 'package:flutter_tree/flutter_tree.dart';
 
-// ignore: avoid_relative_lib_imports
-
-var serverData = [
+/// Your server data
+final serverData = [
   {
     "checked": true,
-    "children": [],
+    "children": [
+      {
+        "checked": true,
+        "show": false,
+        "children": [],
+        "id": 11,
+        "pid": 1,
+        "text": "零售业务线11",
+      },
+    ],
     "id": 1,
     "pid": 0,
     "show": false,
@@ -29,49 +37,20 @@ var serverData = [
   },
 ];
 
-class MyServerData {
-  MyServerData({
-    required this.checked,
-    required this.children,
-    required this.id,
-    required this.pid,
-    required this.show,
-    required this.text,
-  });
-
-  bool checked;
-  int id;
-  int pid;
-  bool show;
-  String text;
-  List<MyServerData> children;
-
-  factory MyServerData.fromJson(Map<String, dynamic> json) => MyServerData(
-        checked: json["checked"],
-        children: List<MyServerData>.from(
-          json["children"].map((x) => MyServerData.fromJson(x)),
-        ),
-        id: json["id"],
-        pid: json["pid"],
-        show: json["show"],
-        text: json["text"],
-      );
-}
-
-TreeNodeData mapServerDataToTreeNodeData(MyServerData data) {
+/// Map server data to tree node data
+TreeNodeData mapServerDataToTreeData(Map data) {
   return TreeNodeData(
     extra: data,
-    title: data.text,
-    expaned: data.show,
-    checked: data.checked,
+    title: data['text'],
+    expaned: data['show'],
+    checked: data['checked'],
     children:
-        List.from(data.children.map((x) => mapServerDataToTreeNodeData(x))),
+        List.from(data['children'].map((x) => mapServerDataToTreeData(x))),
   );
 }
 
+/// Generate tree data
 List<TreeNodeData> treeData = List.generate(
   serverData.length,
-  (index) => mapServerDataToTreeNodeData(
-    MyServerData.fromJson(serverData[index]),
-  ),
-);
+  (index) => mapServerDataToTreeData(serverData[index]),
+).toList();

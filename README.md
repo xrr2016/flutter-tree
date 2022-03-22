@@ -13,22 +13,201 @@ dependencies:
 
 ## Uasge
 
+![loading](./example/loading.gif)
+
+### First Step
+
+```dart
+/// Your server data
+final serverData = [
+  {
+    "checked": true,
+    "children": [
+      {
+        "checked": true,
+        "show": false,
+        "children": [],
+        "id": 11,
+        "pid": 1,
+        "text": "零售业务线11",
+      },
+    ],
+    "id": 1,
+    "pid": 0,
+    "show": false,
+    "text": "零售业务线1",
+  },
+  {
+    "checked": true,
+    "show": false,
+    "children": [],
+    "id": 2,
+    "pid": 0,
+    "text": "零售业务线2",
+  },
+  {
+    "checked": true,
+    "children": [],
+    "id": 3,
+    "pid": 0,
+    "show": false,
+    "text": "零售业务线3",
+  },
+];
+
+/// Map server data to tree node data
+TreeNodeData mapServerDataToTreeData(Map data) {
+  return TreeNodeData(
+    extra: data,
+    title: data['text'],
+    expaned: data['show'],
+    checked: data['checked'],
+    children:
+        List.from(data['children'].map((x) => mapServerDataToTreeData(x))),
+  );
+}
+
+/// Generate tree data
+List<TreeNodeData> treeData = List.generate(
+  serverData.length,
+  (index) => mapServerDataToTreeData(serverData[index]),
+);
+```
+
 ### Basic
 
-### Filter
+```dart
+TreeView(data: treeData)
+```
+
+![basic](./example/basic.jpg)
+
+### Show Filter
+
+```dart
+TreeView(
+  data: treeData,
+  showFilter: true,
+),
+```
+
+![filter](./example/filter.jpg)
 
 ### Checked
 
-### Events
+```dart
+TreeView(
+  data: treeData,
+  showCheckBox: true,
+),
+```
 
-### Actions
+![checked](./example/checked.jpg)
+
+### Show Actions
+
+```dart
+/// Make sure pass `append` function.
+
+TreeView(
+  data: treeData,
+  showActions: true,
+  showCheckBox: true,
+  append: (parent) {
+    print(parent.extra);
+    return TreeNodeData(
+      title: 'Appended',
+      expaned: true,
+      checked: true,
+      children: [],
+    );
+  },
+),
+```
+
+![actions](./example/actions.jpg)
+
+### Bind Events
+
+```dart
+TreeView(
+  data: treeData,
+  showActions: true,
+  showCheckBox: true,
+  append: (parent) {
+    return TreeNodeData(
+      title: 'Appended',
+      expaned: true,
+      checked: true,
+      children: [],
+    );
+  },
+  onTap: (node) {
+    print(node.extra);
+  },
+  onCheck: (checked, node) {
+    print(checked);
+    print(node.extra);
+  },
+  onCollapse: (node) {
+    print(node.extra);
+  },
+  onExpand: (node) {
+    print(node.extra);
+  },
+  onAppend: (node, parent) {
+    print(node.extra);
+    print(parent.extra);
+  },
+  onRemove: (node, parent) {
+    print(node.extra);
+    print(parent.extra);
+  },
+),
+```
 
 ### Lazy load
 
+```dart
+/// Create your load function, return list of TreeNodeData
 
+Future<List<TreeNodeData>> _load(TreeNodeData parent) async {
+  await Future.delayed(const Duration(seconds: 1));
+  final data = [
+    TreeNodeData(
+      title: 'load1',
+      expaned: false,
+      checked: true,
+      children: [],
+      extra: null,
+    ),
+    TreeNodeData(
+      title: 'load2',
+      expaned: false,
+      checked: false,
+      children: [],
+      extra: null,
+    ),
+  ];
 
+  return data;
+}
 
-## Props
+TreeView(
+  data: treeData,
+  lazy: true,
+  load: _load,
+  onLoad: (node) {
+    print('onLoad');
+    print(node.extra);
+  },
+),
+
+```
+
+![load](./example/load.jpg)
+
+## All Props
 
 | property     |                        type                         |       default       |        description        | required |
 | :----------- | :-------------------------------------------------: | :-----------------: | :-----------------------: | :------: |
@@ -41,6 +220,7 @@ dependencies:
 | showCheckBox |                       `bool`                        |       `false`       |    Show node checkbox     | `false`  |
 | onTap        |              `Function(TreeNodeData)`               |       `null`        |     Node tap callback     | `false`  |
 | onExpand     |              `Function(TreeNodeData)`               |       `null`        |   Node expaned callback   | `false`  |
+| onLoad       |              `Function(TreeNodeData)`               |       `null`        |  Node lazy load callback  | `false`  |
 | onCollapse   |              `Function(TreeNodeData)`               |       `null`        |  Node collapse callback   | `false`  |
 | onCheck      |           `Function(bool, TreeNodeData)`            |       `null`        |    Node check callback    | `false`  |
 | onAppend     |       `Function(TreeNodeData, TreeNodeData)`        |       `null`        |   Node append callback    | `false`  |

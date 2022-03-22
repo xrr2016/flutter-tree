@@ -1,4 +1,4 @@
-name: widget test
+name: Test
 
 on: [push]
 

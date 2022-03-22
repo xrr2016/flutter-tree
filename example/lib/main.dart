@@ -8,25 +8,18 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  Future<List<TreeNodeData>> _load(TreeNodeData d) async {
-    await Future.delayed(Duration(seconds: 2));
+  Future<List<TreeNodeData>> _load(TreeNodeData parent) async {
+    await Future.delayed(const Duration(seconds: 1));
     final data = [
       TreeNodeData(
         title: 'load1',
         expaned: false,
-        checked: false,
+        checked: true,
         children: [],
         extra: null,
       ),
       TreeNodeData(
         title: 'load2',
-        expaned: false,
-        checked: false,
-        children: [],
-        extra: null,
-      ),
-      TreeNodeData(
-        title: 'load3',
         expaned: false,
         checked: false,
         children: [],
@@ -42,28 +35,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: const Text('Flutter Tree Demo')),
+        appBar: AppBar(title: const Text('Flutter Tree Example')),
         body: TreeView(
           data: treeData,
-          showFilter: true,
-          showCheckBox: true,
-          // lazy: true,
+          lazy: true,
           load: _load,
-          // icon: Icon(Icons.folder_outlined),
-          onTap: (d) {},
-          onExpand: (d) {},
-          onCollapse: (d) {},
-          onRemove: (d, p) {},
-          append: (TreeNodeData p) {
-            return TreeNodeData(
-              title: 'append',
-              checked: false,
-              expaned: false,
-              children: [],
-            );
+          onLoad: (node) {
+            print('onLoad');
+            print(node.extra);
           },
-          onAppend: (n, p) {},
-          onCheck: (bool val, d) {},
         ),
       ),
     );

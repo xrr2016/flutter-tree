@@ -8,7 +8,10 @@
       "name": "flutter-tree",
       "request": "launch",
       "type": "dart",
-      "program": "example/main.dart",
+      "program": "example/lib/main.dart",
+      "env": {
+        "FLUTTER_WEB_CANVASKIT_URL": "example/canvaskit.js",
+      },
     },
   ]
 }
