@@ -127,8 +127,8 @@ class _TreeViewState extends State<TreeView> {
           if (widget.showFilter)
             Padding(
               padding: const EdgeInsets.only(
-                left: 24.0,
-                right: 24.0,
+                left: 18.0,
+                right: 18.0,
                 bottom: 12.0,
               ),
               child: TextField(onChanged: _onChange),

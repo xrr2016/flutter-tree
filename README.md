@@ -1,5 +1,7 @@
 # Flutter Tree
 
+![cover](./example/cover.jpg)
+
 [![GitHub stars](https://img.shields.io/github/stars/xrr2016/flutter_tree)](https://github.com/xrr2016/flutter_tree/stargazers) [![pub package](https://img.shields.io/pub/v/flutter_tree.svg)](https://pub.dev/packages/flutter_tree) [![Run Test](https://github.com/xrr2016/flutter-tree/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/xrr2016/flutter-tree/actions/workflows/main.yml)
 
 
@@ -16,7 +18,6 @@ dependencies:
 
 ## Uasge
 
-![loading](./example/loading.gif)
 
 ### First Step
 
@@ -32,13 +33,13 @@ final serverData = [
         "children": [],
         "id": 11,
         "pid": 1,
-        "text": "零售业务线11",
+        "text": "Child title 11",
       },
     ],
     "id": 1,
     "pid": 0,
     "show": false,
-    "text": "零售业务线1",
+    "text": "Parent title 1",
   },
   {
     "checked": true,
@@ -46,7 +47,7 @@ final serverData = [
     "children": [],
     "id": 2,
     "pid": 0,
-    "text": "零售业务线2",
+    "text": "Parent title 2",
   },
   {
     "checked": true,
@@ -54,7 +55,7 @@ final serverData = [
     "id": 3,
     "pid": 0,
     "show": false,
-    "text": "零售业务线3",
+    "text": "Parent title 3",
   },
 ];
 
@@ -208,7 +209,7 @@ TreeView(
 
 ```
 
-![load](./example/load.jpg)
+![load](./example/loading.gif)
 
 ## All Props
 

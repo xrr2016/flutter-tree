@@ -1,3 +1,10 @@
+## [2.0.2] - 2022.03.23
+
+  1. Fix title overflow.
+  2. Change actions button text to english.
+  3. Add tree node hover color.
+  4. Update docs.
+
 ## [2.0.1] - 2022.03.22
 
 *  Add online example.

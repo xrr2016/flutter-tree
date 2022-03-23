@@ -57,6 +57,7 @@ class _TreeNodeState extends State<TreeNode>
   bool _isExpaned = false;
   bool _isChecked = false;
   bool _showLoading = false;
+  Color _bgColor = Colors.transparent;
   late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: -0.25, end: 0.0);
 
@@ -109,97 +110,111 @@ class _TreeNodeState extends State<TreeNode>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              RotationTransition(
-                child: IconButton(
-                  iconSize: 16,
-                  icon: widget.icon,
-                  onPressed: () {
-                    widget.onTap(widget.data);
+        MouseRegion(
+          onHover: (event) {},
+          onEnter: (event) {
+            _bgColor = Colors.grey[200]!;
+            setState(() {});
+          },
+          onExit: (event) {
+            _bgColor = Colors.transparent;
+            setState(() {});
+          },
+          child: Container(
+            color: _bgColor,
+            margin: const EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                RotationTransition(
+                  child: IconButton(
+                    iconSize: 16,
+                    icon: widget.icon,
+                    onPressed: () {
+                      widget.onTap(widget.data);
 
-                    if (widget.lazy && widget.data.children.isEmpty) {
-                      setState(() {
-                        _showLoading = true;
-                      });
-                      widget.load(widget.data).then((value) {
-                        if (value) {
-                          _isExpaned = true;
-                          _rotationController.forward();
-                          widget.onLoad(widget.data);
-                        }
-                        _showLoading = false;
-                        setState(() {});
-                      });
-                    } else {
-                      _isExpaned = !_isExpaned;
-                      if (_isExpaned) {
-                        _rotationController.forward();
+                      if (widget.lazy && widget.data.children.isEmpty) {
+                        setState(() {
+                          _showLoading = true;
+                        });
+                        widget.load(widget.data).then((value) {
+                          if (value) {
+                            _isExpaned = true;
+                            _rotationController.forward();
+                            widget.onLoad(widget.data);
+                          }
+                          _showLoading = false;
+                          setState(() {});
+                        });
                       } else {
-                        _rotationController.reverse();
+                        _isExpaned = !_isExpaned;
+                        if (_isExpaned) {
+                          _rotationController.forward();
+                        } else {
+                          _rotationController.reverse();
+                        }
+                        setState(() {});
                       }
+                    },
+                  ),
+                  turns: _turnsTween.animate(_rotationController),
+                ),
+                if (widget.showCheckBox)
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: (bool? value) {
+                      _isChecked = value!;
+                      widget.onCheck(_isChecked, widget.data);
                       setState(() {});
-                    }
-                  },
+                    },
+                  ),
+                if (widget.lazy && _showLoading)
+                  const SizedBox(
+                    width: 12.0,
+                    height: 12.0,
+                    child: CircularProgressIndicator(strokeWidth: 1.0),
+                  ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: Text(
+                      widget.data.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-                turns: _turnsTween.animate(_rotationController),
-              ),
-              if (widget.showCheckBox)
-                Checkbox(
-                  value: _isChecked,
-                  onChanged: (bool? value) {
-                    _isChecked = value!;
-                    widget.onCheck(_isChecked, widget.data);
-                    setState(() {});
-                  },
-                ),
-              if (widget.lazy && _showLoading)
-                const SizedBox(
-                  width: 12.0,
-                  height: 12.0,
-                  child: CircularProgressIndicator(strokeWidth: 1.0),
-                ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                  child: Text(widget.data.title),
-                ),
-              ),
-              if (widget.showActions)
-                ButtonBar(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        widget.append(widget.data);
-                        widget.onAppend(widget.data, widget.parent);
-                      },
-                      child: Text(
-                        '添加',
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.labelSmall?.fontSize,
-                        ),
+                if (widget.showActions)
+                  TextButton(
+                    onPressed: () {
+                      widget.append(widget.data);
+                      widget.onAppend(widget.data, widget.parent);
+                    },
+                    child: Text(
+                      'Add',
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.labelSmall?.fontSize,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        widget.remove(widget.data);
-                        widget.onRemove(widget.data, widget.parent);
-                      },
-                      child: Text(
-                        '删除',
-                        style: TextStyle(
-                          fontSize:
-                              Theme.of(context).textTheme.labelSmall?.fontSize,
-                        ),
+                  ),
+                if (widget.showActions)
+                  TextButton(
+                    onPressed: () {
+                      widget.remove(widget.data);
+                      widget.onRemove(widget.data, widget.parent);
+                    },
+                    child: Text(
+                      'Remove',
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.labelSmall?.fontSize,
                       ),
                     ),
-                  ],
-                ),
-            ],
+                  ),
+              ],
+            ),
           ),
         ),
         SizeTransition(

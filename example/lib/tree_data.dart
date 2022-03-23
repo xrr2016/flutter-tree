@@ -11,13 +11,13 @@ final serverData = [
         "children": [],
         "id": 11,
         "pid": 1,
-        "text": "零售业务线11",
+        "text": "Child title 11",
       },
     ],
     "id": 1,
     "pid": 0,
     "show": false,
-    "text": "零售业务线1",
+    "text": "Parent title 1",
   },
   {
     "checked": true,
@@ -25,7 +25,7 @@ final serverData = [
     "children": [],
     "id": 2,
     "pid": 0,
-    "text": "零售业务线2",
+    "text": "Parent title 2",
   },
   {
     "checked": true,
@@ -33,7 +33,7 @@ final serverData = [
     "id": 3,
     "pid": 0,
     "show": false,
-    "text": "零售业务线3",
+    "text": "Parent title 3",
   },
 ];
 

@@ -12,14 +12,14 @@ class MyApp extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 1));
     final data = [
       TreeNodeData(
-        title: 'load1',
+        title: 'Load node 1',
         expaned: false,
         checked: true,
         children: [],
         extra: null,
       ),
       TreeNodeData(
-        title: 'load2',
+        title: 'Load node 2',
         expaned: false,
         checked: false,
         children: [],
