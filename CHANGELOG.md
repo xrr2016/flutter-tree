@@ -1,3 +1,6 @@
+## [2.0.3] - 2022.03.24
+  1. Set actions text to 12.0.
+  2. Add example loading.
 ## [2.0.2] - 2022.03.23
 
   1. Fix title overflow.

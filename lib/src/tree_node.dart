@@ -191,13 +191,7 @@ class _TreeNodeState extends State<TreeNode>
                       widget.append(widget.data);
                       widget.onAppend(widget.data, widget.parent);
                     },
-                    child: Text(
-                      'Add',
-                      style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.labelSmall?.fontSize,
-                      ),
-                    ),
+                    child: const Text('Add', style: TextStyle(fontSize: 12.0)),
                   ),
                 if (widget.showActions)
                   TextButton(
@@ -205,13 +199,8 @@ class _TreeNodeState extends State<TreeNode>
                       widget.remove(widget.data);
                       widget.onRemove(widget.data, widget.parent);
                     },
-                    child: Text(
-                      'Remove',
-                      style: TextStyle(
-                        fontSize:
-                            Theme.of(context).textTheme.labelSmall?.fontSize,
-                      ),
-                    ),
+                    child:
+                        const Text('Remove', style: TextStyle(fontSize: 12.0)),
                   ),
               ],
             ),
