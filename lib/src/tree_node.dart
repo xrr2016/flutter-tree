@@ -177,12 +177,20 @@ class _TreeNodeState extends State<TreeNode>
                   ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: Text(
-                      widget.data.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: EdgeInsets.all(10.0),
+                        child: GestureDetector(
+                          child: Text(
+                            widget.data.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          onTap: () => widget.onTap(widget.data), //click
+                        ),
+                      )
+
                   ),
                 ),
                 if (widget.showActions)
