@@ -10,6 +10,7 @@ class TreeView extends StatefulWidget {
   final Widget icon;
   final double offsetLeft;
   final bool showFilter;
+  final String filterPlaceholder;
   final bool showActions;
   final bool showCheckBox;
 
@@ -39,6 +40,7 @@ class TreeView extends StatefulWidget {
     this.lazy = false,
     this.offsetLeft = 24.0,
     this.showFilter = false,
+    this.filterPlaceholder = 'Search',
     this.showActions = false,
     this.showCheckBox = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
@@ -131,7 +133,12 @@ class _TreeViewState extends State<TreeView> {
                 right: 18.0,
                 bottom: 12.0,
               ),
-              child: TextField(onChanged: _onChange),
+              child: TextField(
+                onChanged: _onChange,
+                 decoration: InputDecoration(
+                  labelText: widget.filterPlaceholder,
+                )
+              ),
             ),
           ...List.generate(
             _renderList.length,

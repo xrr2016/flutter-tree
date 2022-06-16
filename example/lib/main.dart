@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
           showActions: true,
           showCheckBox: true,
           showFilter: true,
+          filterPlaceholder: "Custom placeholder",
           append: (parent) {
             print(parent.extra);
             return TreeNodeData(
