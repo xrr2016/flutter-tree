@@ -13,7 +13,6 @@ class TreeView extends StatefulWidget {
   final String filterPlaceholder;
   final bool showActions;
   final bool showCheckBox;
-
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onLoad;
   final void Function(TreeNodeData node)? onExpand;
@@ -55,24 +54,35 @@ class _TreeViewState extends State<TreeView> {
   List<TreeNodeData> _renderList = [];
 
   List<TreeNodeData> _filter(String val, List<TreeNodeData> list) {
-    List<TreeNodeData> temp = [];
+    List<TreeNodeData> tempNodes = [];
+
     for (int i = 0; i < list.length; i++) {
-      if (list[i].title.contains(val)) {
-        temp.add(list[i]);
+      TreeNodeData tempNode = TreeNodeData(
+        title: list[i].title,
+        checked: list[i].checked,
+        expaned: list[i].expaned,
+        children: list[i].children,
+      );
+
+      if (tempNode.children.isNotEmpty) {
+        tempNode.children = _filter(val, tempNode.children);
       }
-      if (list[i].children.isNotEmpty) {
-        list[i].children = _filter(val, list[i].children);
+
+      if (tempNode.title.contains(new RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+        tempNodes.add(tempNode);
       }
     }
-    return temp;
+
+    return tempNodes;
   }
 
   void _onChange(String val) {
+     _renderList = widget.data;
+     
     if (val.isNotEmpty) {
       _renderList = _filter(val, _renderList);
-    } else {
-      _renderList = widget.data;
     }
+
     setState(() {});
   }
 
