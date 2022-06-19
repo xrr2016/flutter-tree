@@ -88,7 +88,7 @@ class _TreeNodeState extends State<TreeNode>
   @override
   initState() {
     super.initState();
-    _isExpanded = widget.data.expaned;
+    _isExpanded = widget.data.expanded;
     _isChecked = widget.data.checked;
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),

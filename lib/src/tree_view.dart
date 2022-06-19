@@ -60,7 +60,7 @@ class _TreeViewState extends State<TreeView> {
       TreeNodeData tempNode = TreeNodeData(
         title: list[i].title,
         checked: list[i].checked,
-        expaned: list[i].expaned,
+        expanded: list[i].expanded,
         children: list[i].children,
       );
 
@@ -78,7 +78,7 @@ class _TreeViewState extends State<TreeView> {
 
   void _onChange(String val) {
      _renderList = widget.data;
-     
+
     if (val.isNotEmpty) {
       _renderList = _filter(val, _renderList);
     }
@@ -126,7 +126,7 @@ class _TreeViewState extends State<TreeView> {
       title: '',
       extra: null,
       checked: false,
-      expaned: false,
+      expanded: false,
       children: _renderList,
     );
   }
