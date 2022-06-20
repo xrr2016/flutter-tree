@@ -54,7 +54,7 @@ class TreeNode extends StatefulWidget {
 
 class _TreeNodeState extends State<TreeNode>
     with SingleTickerProviderStateMixin {
-  bool _isExpaned = false;
+  bool _isExpanded = false;
   bool _isChecked = false;
   bool _showLoading = false;
   Color _bgColor = Colors.transparent;
@@ -88,7 +88,7 @@ class _TreeNodeState extends State<TreeNode>
   @override
   initState() {
     super.initState();
-    _isExpaned = widget.data.expaned;
+    _isExpanded = widget.data.expanded;
     _isChecked = widget.data.checked;
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -100,13 +100,15 @@ class _TreeNodeState extends State<TreeNode>
           widget.onCollapse(widget.data);
         }
       });
-    if (_isExpaned) {
+    if (_isExpanded) {
       _rotationController.forward();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    bool hasData = widget.data.children.isNotEmpty || (widget.lazy && !_isExpanded);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -130,8 +132,8 @@ class _TreeNodeState extends State<TreeNode>
                 RotationTransition(
                   child: IconButton(
                     iconSize: 16,
-                    icon: widget.icon,
-                    onPressed: () {
+                    icon: hasData ? widget.icon : Container(),
+                    onPressed: hasData ? () {
                       widget.onTap(widget.data);
 
                       if (widget.lazy && widget.data.children.isEmpty) {
@@ -140,7 +142,7 @@ class _TreeNodeState extends State<TreeNode>
                         });
                         widget.load(widget.data).then((value) {
                           if (value) {
-                            _isExpaned = true;
+                            _isExpanded = true;
                             _rotationController.forward();
                             widget.onLoad(widget.data);
                           }
@@ -148,18 +150,18 @@ class _TreeNodeState extends State<TreeNode>
                           setState(() {});
                         });
                       } else {
-                        _isExpaned = !_isExpaned;
-                        if (_isExpaned) {
+                        _isExpanded = !_isExpanded;
+                        if (_isExpanded) {
                           _rotationController.forward();
                         } else {
                           _rotationController.reverse();
                         }
                         setState(() {});
                       }
-                    },
+                    } : null,
                   ),
                   turns: _turnsTween.animate(_rotationController),
-                ),
+                ),       
                 if (widget.showCheckBox)
                   Checkbox(
                     value: _isChecked,

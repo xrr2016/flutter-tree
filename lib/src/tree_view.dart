@@ -10,9 +10,9 @@ class TreeView extends StatefulWidget {
   final Widget icon;
   final double offsetLeft;
   final bool showFilter;
+  final String filterPlaceholder;
   final bool showActions;
   final bool showCheckBox;
-
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onLoad;
   final void Function(TreeNodeData node)? onExpand;
@@ -39,6 +39,7 @@ class TreeView extends StatefulWidget {
     this.lazy = false,
     this.offsetLeft = 24.0,
     this.showFilter = false,
+    this.filterPlaceholder = 'Search',
     this.showActions = false,
     this.showCheckBox = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
@@ -53,24 +54,35 @@ class _TreeViewState extends State<TreeView> {
   List<TreeNodeData> _renderList = [];
 
   List<TreeNodeData> _filter(String val, List<TreeNodeData> list) {
-    List<TreeNodeData> temp = [];
+    List<TreeNodeData> tempNodes = [];
+
     for (int i = 0; i < list.length; i++) {
-      if (list[i].title.contains(val)) {
-        temp.add(list[i]);
+      TreeNodeData tempNode = TreeNodeData(
+        title: list[i].title,
+        checked: list[i].checked,
+        expanded: list[i].expanded,
+        children: list[i].children,
+      );
+
+      if (tempNode.children.isNotEmpty) {
+        tempNode.children = _filter(val, tempNode.children);
       }
-      if (list[i].children.isNotEmpty) {
-        list[i].children = _filter(val, list[i].children);
+
+      if (tempNode.title.contains(new RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+        tempNodes.add(tempNode);
       }
     }
-    return temp;
+
+    return tempNodes;
   }
 
   void _onChange(String val) {
+     _renderList = widget.data;
+
     if (val.isNotEmpty) {
       _renderList = _filter(val, _renderList);
-    } else {
-      _renderList = widget.data;
     }
+
     setState(() {});
   }
 
@@ -114,7 +126,7 @@ class _TreeViewState extends State<TreeView> {
       title: '',
       extra: null,
       checked: false,
-      expaned: false,
+      expanded: false,
       children: _renderList,
     );
   }
@@ -131,7 +143,12 @@ class _TreeViewState extends State<TreeView> {
                 right: 18.0,
                 bottom: 12.0,
               ),
-              child: TextField(onChanged: _onChange),
+              child: TextField(
+                onChanged: _onChange,
+                 decoration: InputDecoration(
+                  labelText: widget.filterPlaceholder,
+                )
+              ),
             ),
           ...List.generate(
             _renderList.length,
