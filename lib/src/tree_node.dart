@@ -114,6 +114,9 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         InkWell(
+          splashColor: widget.contentTappable ? null : Colors.transparent,
+          highlightColor: widget.contentTappable ? null : Colors.transparent,
+          mouseCursor: widget.contentTappable ? SystemMouseCursors.click : MouseCursor.defer,
           onTap: widget.contentTappable ? () {
             if (hasData) {
               widget.onTap(widget.data);
@@ -123,7 +126,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
               widget.onCheck(_isChecked, widget.data);
               setState(() {});
             }
-          } : null,
+          } : (){},
           child: Container(
             margin: const EdgeInsets.only(bottom: 2.0),
             padding: const EdgeInsets.only(right: 12.0),
