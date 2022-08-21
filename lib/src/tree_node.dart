@@ -58,7 +58,6 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
   bool _isExpanded = false;
   bool _isChecked = false;
   bool _showLoading = false;
-  Color _bgColor = Colors.transparent;
   late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: -0.25, end: 0.0);
 
@@ -114,92 +113,79 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        MouseRegion(
-            onHover: (event) {},
-            onEnter: (event) {
-              _bgColor = Colors.grey[200]!;
+        InkWell(
+          onTap: widget.contentTappable ? () {
+            if (hasData) {
+              widget.onTap(widget.data);
+              toggleExpansion();
+            } else {
+              _isChecked = !_isChecked;
+              widget.onCheck(_isChecked, widget.data);
               setState(() {});
-            },
-            onExit: (event) {
-              _bgColor = Colors.transparent;
-              setState(() {});
-            },
-            cursor: widget.contentTappable ? SystemMouseCursors.click : MouseCursor.defer,
-            child: GestureDetector(
-              behavior: widget.contentTappable ? HitTestBehavior.deferToChild : HitTestBehavior.opaque,
-              onTap: widget.contentTappable ? () {
-                if (hasData) {
-                  widget.onTap(widget.data);
-                  toggleExpansion();
-                } else {
-                  _isChecked = !_isChecked;
-                  widget.onCheck(_isChecked, widget.data);
-                  setState(() {});
-                }
-              } : null,
-              child: Container(
-                color: _bgColor,
-                margin: const EdgeInsets.only(bottom: 2.0),
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    RotationTransition(
-                      child: IconButton(
-                        iconSize: 16,
-                        icon: hasData ? widget.icon : Container(),
-                        onPressed: hasData ? () {
-                          widget.onTap(widget.data);
-                          toggleExpansion();
-                        } : null,
-                      ),
-                      turns: _turnsTween.animate(_rotationController),
-                    ),
-                    if (widget.showCheckBox)
-                      Checkbox(
-                        value: _isChecked,
-                        onChanged: (bool? value) {
-                          _isChecked = value!;
-                          widget.onCheck(_isChecked, widget.data);
-                          setState(() {});
-                        },
-                      ),
-                    if (widget.lazy && _showLoading)
-                      const SizedBox(
-                        width: 12.0,
-                        height: 12.0,
-                        child: CircularProgressIndicator(strokeWidth: 1.0),
-                      ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                        child: Text(
-                          widget.data.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    if (widget.showActions)
-                      TextButton(
-                        onPressed: () {
-                          widget.append(widget.data);
-                          widget.onAppend(widget.data, widget.parent);
-                        },
-                        child: const Text('Add', style: TextStyle(fontSize: 12.0)),
-                      ),
-                    if (widget.showActions)
-                      TextButton(
-                        onPressed: () {
-                          widget.remove(widget.data);
-                          widget.onRemove(widget.data, widget.parent);
-                        },
-                        child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
-                      ),
-                  ],
+            }
+          } : null,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                RotationTransition(
+                  child: IconButton(
+                    iconSize: 16,
+                    icon: hasData ? widget.icon : Container(),
+                    onPressed: hasData ? () {
+                      widget.onTap(widget.data);
+                      toggleExpansion();
+                    } : null,
+                  ),
+                  turns: _turnsTween.animate(_rotationController),
                 ),
-              ),
-            )),
+                if (widget.showCheckBox)
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: (bool? value) {
+                      _isChecked = value!;
+                      widget.onCheck(_isChecked, widget.data);
+                      setState(() {});
+                    },
+                  ),
+                if (widget.lazy && _showLoading)
+                  const SizedBox(
+                    width: 12.0,
+                    height: 12.0,
+                    child: CircularProgressIndicator(strokeWidth: 1.0),
+                  ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: Text(
+                      widget.data.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                if (widget.showActions)
+                  TextButton(
+                    onPressed: () {
+                      widget.append(widget.data);
+                      widget.onAppend(widget.data, widget.parent);
+                    },
+                    child: const Text('Add', style: TextStyle(fontSize: 12.0)),
+                  ),
+                if (widget.showActions)
+                  TextButton(
+                    onPressed: () {
+                      widget.remove(widget.data);
+                      widget.onRemove(widget.data, widget.parent);
+                    },
+                    child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
+                  ),
+              ],
+            ),
+          ),
+        ),
         SizeTransition(
           sizeFactor: _rotationController,
           child: Padding(
