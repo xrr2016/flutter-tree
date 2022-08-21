@@ -57,18 +57,13 @@ class _TreeViewState extends State<TreeView> {
     List<TreeNodeData> tempNodes = [];
 
     for (int i = 0; i < list.length; i++) {
-      TreeNodeData tempNode = TreeNodeData(
-        title: list[i].title,
-        checked: list[i].checked,
-        expanded: list[i].expanded,
-        children: list[i].children,
-      );
+      TreeNodeData tempNode = TreeNodeData.from(list[i]);
 
       if (tempNode.children.isNotEmpty) {
         tempNode.children = _filter(val, tempNode.children);
       }
 
-      if (tempNode.title.contains(new RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
         tempNodes.add(tempNode);
       }
     }

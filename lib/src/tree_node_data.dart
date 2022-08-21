@@ -12,4 +12,7 @@ class TreeNodeData {
     required this.children,
     this.extra,
   });
+
+  TreeNodeData.from(TreeNodeData other):
+    this(title: other.title, expanded: other.expanded, checked: other.checked, extra: other.extra, children: other.children);
 }
