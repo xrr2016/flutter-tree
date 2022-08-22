@@ -3,7 +3,7 @@ import 'package:flutter_tree/flutter_tree.dart';
 
 import './tree_data.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -13,14 +13,14 @@ class MyApp extends StatelessWidget {
     final data = [
       TreeNodeData(
         title: 'Load node 1',
-        expaned: false,
+        expanded: false,
         checked: true,
         children: [],
         extra: null,
       ),
       TreeNodeData(
         title: 'Load node 2',
-        expaned: false,
+        expanded: true,
         checked: false,
         children: [],
         extra: null,
@@ -43,12 +43,13 @@ class MyApp extends StatelessWidget {
           showActions: true,
           showCheckBox: true,
           showFilter: true,
+          contentTappable: true,
           filterPlaceholder: "Custom placeholder",
           append: (parent) {
             print(parent.extra);
             return TreeNodeData(
               title: 'Appended',
-              expaned: true,
+              expanded: true,
               checked: true,
               children: [],
             );

@@ -10,6 +10,7 @@ class TreeNode extends StatefulWidget {
   final Widget icon;
   final bool showCheckBox;
   final bool showActions;
+  final bool contentTappable;
   final double offsetLeft;
 
   final Function(TreeNodeData node) onTap;
@@ -34,6 +35,7 @@ class TreeNode extends StatefulWidget {
     required this.offsetLeft,
     required this.showCheckBox,
     required this.showActions,
+    required this.contentTappable,
     required this.icon,
     required this.lazy,
     required this.load,
@@ -52,12 +54,10 @@ class TreeNode extends StatefulWidget {
   _TreeNodeState createState() => _TreeNodeState();
 }
 
-class _TreeNodeState extends State<TreeNode>
-    with SingleTickerProviderStateMixin {
+class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
   bool _isChecked = false;
   bool _showLoading = false;
-  Color _bgColor = Colors.transparent;
   late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: -0.25, end: 0.0);
 
@@ -74,6 +74,7 @@ class _TreeNodeState extends State<TreeNode>
         offsetLeft: widget.offsetLeft,
         showCheckBox: widget.showCheckBox,
         showActions: widget.showActions,
+        contentTappable: widget.contentTappable,
         onTap: widget.onTap,
         onCheck: widget.onCheck,
         onExpand: widget.onExpand,
@@ -112,18 +113,21 @@ class _TreeNodeState extends State<TreeNode>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        MouseRegion(
-          onHover: (event) {},
-          onEnter: (event) {
-            _bgColor = Colors.grey[200]!;
-            setState(() {});
-          },
-          onExit: (event) {
-            _bgColor = Colors.transparent;
-            setState(() {});
-          },
+        InkWell(
+          splashColor: widget.contentTappable ? null : Colors.transparent,
+          highlightColor: widget.contentTappable ? null : Colors.transparent,
+          mouseCursor: widget.contentTappable ? SystemMouseCursors.click : MouseCursor.defer,
+          onTap: widget.contentTappable ? () {
+            if (hasData) {
+              widget.onTap(widget.data);
+              toggleExpansion();
+            } else {
+              _isChecked = !_isChecked;
+              widget.onCheck(_isChecked, widget.data);
+              setState(() {});
+            }
+          } : (){},
           child: Container(
-            color: _bgColor,
             margin: const EdgeInsets.only(bottom: 2.0),
             padding: const EdgeInsets.only(right: 12.0),
             child: Row(
@@ -135,33 +139,11 @@ class _TreeNodeState extends State<TreeNode>
                     icon: hasData ? widget.icon : Container(),
                     onPressed: hasData ? () {
                       widget.onTap(widget.data);
-
-                      if (widget.lazy && widget.data.children.isEmpty) {
-                        setState(() {
-                          _showLoading = true;
-                        });
-                        widget.load(widget.data).then((value) {
-                          if (value) {
-                            _isExpanded = true;
-                            _rotationController.forward();
-                            widget.onLoad(widget.data);
-                          }
-                          _showLoading = false;
-                          setState(() {});
-                        });
-                      } else {
-                        _isExpanded = !_isExpanded;
-                        if (_isExpanded) {
-                          _rotationController.forward();
-                        } else {
-                          _rotationController.reverse();
-                        }
-                        setState(() {});
-                      }
+                      toggleExpansion();
                     } : null,
                   ),
                   turns: _turnsTween.animate(_rotationController),
-                ),       
+                ),
                 if (widget.showCheckBox)
                   Checkbox(
                     value: _isChecked,
@@ -201,8 +183,7 @@ class _TreeNodeState extends State<TreeNode>
                       widget.remove(widget.data);
                       widget.onRemove(widget.data, widget.parent);
                     },
-                    child:
-                        const Text('Remove', style: TextStyle(fontSize: 12.0)),
+                    child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
                   ),
               ],
             ),
@@ -217,5 +198,30 @@ class _TreeNodeState extends State<TreeNode>
         )
       ],
     );
+  }
+
+  void toggleExpansion() {
+    if (widget.lazy && widget.data.children.isEmpty) {
+      setState(() {
+        _showLoading = true;
+      });
+      widget.load(widget.data).then((value) {
+        if (value) {
+          _isExpanded = true;
+          _rotationController.forward();
+          widget.onLoad(widget.data);
+        }
+        _showLoading = false;
+        setState(() {});
+      });
+    } else {
+      _isExpanded = !_isExpanded;
+      if (_isExpanded) {
+        _rotationController.forward();
+      } else {
+        _rotationController.reverse();
+      }
+      setState(() {});
+    }
   }
 }

@@ -13,6 +13,7 @@ class TreeView extends StatefulWidget {
   final String filterPlaceholder;
   final bool showActions;
   final bool showCheckBox;
+  final bool contentTappable;
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onLoad;
   final void Function(TreeNodeData node)? onExpand;
@@ -42,6 +43,7 @@ class TreeView extends StatefulWidget {
     this.filterPlaceholder = 'Search',
     this.showActions = false,
     this.showCheckBox = false,
+    this.contentTappable = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
   }) : super(key: key);
 
@@ -57,18 +59,13 @@ class _TreeViewState extends State<TreeView> {
     List<TreeNodeData> tempNodes = [];
 
     for (int i = 0; i < list.length; i++) {
-      TreeNodeData tempNode = TreeNodeData(
-        title: list[i].title,
-        checked: list[i].checked,
-        expanded: list[i].expanded,
-        children: list[i].children,
-      );
+      TreeNodeData tempNode = TreeNodeData.from(list[i]);
 
       if (tempNode.children.isNotEmpty) {
         tempNode.children = _filter(val, tempNode.children);
       }
 
-      if (tempNode.title.contains(new RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
         tempNodes.add(tempNode);
       }
     }
@@ -164,6 +161,7 @@ class _TreeViewState extends State<TreeView> {
                 offsetLeft: widget.offsetLeft,
                 showCheckBox: widget.showCheckBox,
                 showActions: widget.showActions,
+                contentTappable: widget.contentTappable,
                 onTap: widget.onTap ?? (n) {},
                 onLoad: widget.onLoad ?? (n) {},
                 onCheck: widget.onCheck ?? (b, n) {},
