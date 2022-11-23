@@ -152,6 +152,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                 if (widget.showCheckBox)
                   Checkbox(
                     value: _isChecked,
+                    checkColor: widget.data.checkBoxCheckColor,
+                    fillColor: widget.data.checkBoxFillColor,
                     onChanged: (bool? value) {
                       _isChecked = value!;
                       if (widget.parentState != null) _checkUncheckParent();

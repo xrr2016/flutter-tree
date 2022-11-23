@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
+
 class TreeNodeData {
   String title;
   bool expanded;
   bool checked;
   dynamic extra;
+  final Color? checkBoxCheckColor;
+  final MaterialStateProperty<Color>? checkBoxFillColor;
   List<TreeNodeData> children;
 
   TreeNodeData({
@@ -11,6 +15,8 @@ class TreeNodeData {
     required this.checked,
     required this.children,
     this.extra,
+    this.checkBoxCheckColor,
+    this.checkBoxFillColor,
   });
 
   TreeNodeData.from(TreeNodeData other):
