@@ -5,6 +5,7 @@ import '../flutter_tree.dart';
 class TreeNode extends StatefulWidget {
   final TreeNodeData data;
   final TreeNodeData parent;
+  final State? parentState;
 
   final bool lazy;
   final Widget icon;
@@ -32,6 +33,7 @@ class TreeNode extends StatefulWidget {
     Key? key,
     required this.data,
     required this.parent,
+    this.parentState,
     required this.offsetLeft,
     required this.showCheckBox,
     required this.showActions,
@@ -66,6 +68,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
       return TreeNode(
         data: list[index],
         parent: widget.data,
+        parentState: widget.parentState != null ? this : null,
         remove: widget.remove,
         append: widget.append,
         icon: widget.icon,
@@ -108,6 +111,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    if (widget.parentState != null) _isChecked = widget.data.checked;
+
     bool hasData = widget.data.children.isNotEmpty || (widget.lazy && !_isExpanded);
 
     return Column(
@@ -150,6 +155,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     onChanged: (bool? value) {
                       _isChecked = value!;
                       widget.onCheck(_isChecked, widget.data);
+                      if (widget.parentState != null) _checkUncheckParent();
                       setState(() {});
                     },
                   ),
@@ -223,5 +229,16 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
       }
       setState(() {});
     }
+  }
+
+  void _checkUncheckParent() {
+    // Check/uncheck all children based on parent state
+    widget.data.checked = _isChecked;
+    widget.data.children.forEach((child) => child.checked = _isChecked);
+    widget.parentState!.setState(() {});
+
+    // Check/uncheck parent based on children state
+    widget.parent.checked = widget.parent.children.every((e) => e.checked);
+    widget.parentState!.setState(() {});
   }
 }
