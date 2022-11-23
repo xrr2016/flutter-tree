@@ -154,8 +154,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     value: _isChecked,
                     onChanged: (bool? value) {
                       _isChecked = value!;
-                      widget.onCheck(_isChecked, widget.data);
                       if (widget.parentState != null) _checkUncheckParent();
+                      widget.onCheck(_isChecked, widget.data);
                       setState(() {});
                     },
                   ),
