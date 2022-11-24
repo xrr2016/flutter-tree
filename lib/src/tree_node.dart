@@ -5,6 +5,7 @@ import '../flutter_tree.dart';
 class TreeNode extends StatefulWidget {
   final TreeNodeData data;
   final TreeNodeData parent;
+  final State? parentState;
 
   final bool lazy;
   final Widget icon;
@@ -12,6 +13,7 @@ class TreeNode extends StatefulWidget {
   final bool showActions;
   final bool contentTappable;
   final double offsetLeft;
+  final int? maxLines;
 
   final Function(TreeNodeData node) onTap;
   final void Function(bool checked, TreeNodeData node) onCheck;
@@ -32,7 +34,9 @@ class TreeNode extends StatefulWidget {
     Key? key,
     required this.data,
     required this.parent,
+    this.parentState,
     required this.offsetLeft,
+    this.maxLines,
     required this.showCheckBox,
     required this.showActions,
     required this.contentTappable,
@@ -66,12 +70,14 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
       return TreeNode(
         data: list[index],
         parent: widget.data,
+        parentState: widget.parentState != null ? this : null,
         remove: widget.remove,
         append: widget.append,
         icon: widget.icon,
         lazy: widget.lazy,
         load: widget.load,
         offsetLeft: widget.offsetLeft,
+        maxLines: widget.maxLines,
         showCheckBox: widget.showCheckBox,
         showActions: widget.showActions,
         contentTappable: widget.contentTappable,
@@ -108,6 +114,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    if (widget.parentState != null) _isChecked = widget.data.checked;
+
     bool hasData = widget.data.children.isNotEmpty || (widget.lazy && !_isExpanded);
 
     return Column(
@@ -147,8 +155,11 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                 if (widget.showCheckBox)
                   Checkbox(
                     value: _isChecked,
+                    checkColor: widget.data.checkBoxCheckColor,
+                    fillColor: widget.data.checkBoxFillColor,
                     onChanged: (bool? value) {
                       _isChecked = value!;
+                      if (widget.parentState != null) _checkUncheckParent();
                       widget.onCheck(_isChecked, widget.data);
                       setState(() {});
                     },
@@ -164,7 +175,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: Text(
                       widget.data.title,
-                      maxLines: 1,
+                      maxLines: widget.maxLines ?? 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -223,5 +234,16 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
       }
       setState(() {});
     }
+  }
+
+  void _checkUncheckParent() {
+    // Check/uncheck all children based on parent state
+    widget.data.checked = _isChecked;
+    widget.data.children.forEach((child) => child.checked = _isChecked);
+    widget.parentState!.setState(() {});
+
+    // Check/uncheck parent based on children state
+    widget.parent.checked = widget.parent.children.every((e) => e.checked);
+    widget.parentState!.setState(() {});
   }
 }

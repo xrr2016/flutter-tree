@@ -9,11 +9,18 @@ class TreeView extends StatefulWidget {
   final bool lazy;
   final Widget icon;
   final double offsetLeft;
+  final int? maxLines;
   final bool showFilter;
   final String filterPlaceholder;
   final bool showActions;
   final bool showCheckBox;
   final bool contentTappable;
+
+  /// Desired behavior:
+  /// - if I check/uncheck a parent I want all children to be checked/unchecked
+  /// - if I check/uncheck all children I want the parent to be checked/unchecked
+  final bool manageParentState;
+
   final Function(TreeNodeData node)? onTap;
   final void Function(TreeNodeData node)? onLoad;
   final void Function(TreeNodeData node)? onExpand;
@@ -39,12 +46,14 @@ class TreeView extends StatefulWidget {
     this.load,
     this.lazy = false,
     this.offsetLeft = 24.0,
+    this.maxLines,
     this.showFilter = false,
     this.filterPlaceholder = 'Search',
     this.showActions = false,
     this.showCheckBox = false,
     this.contentTappable = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
+    this.manageParentState = false,
   }) : super(key: key);
 
   @override
@@ -155,10 +164,12 @@ class _TreeViewState extends State<TreeView> {
                 remove: remove,
                 append: append,
                 parent: _root,
+                parentState: widget.manageParentState ? this : null,
                 data: _renderList[index],
                 icon: widget.icon,
                 lazy: widget.lazy,
                 offsetLeft: widget.offsetLeft,
+                maxLines: widget.maxLines,
                 showCheckBox: widget.showCheckBox,
                 showActions: widget.showActions,
                 contentTappable: widget.contentTappable,
