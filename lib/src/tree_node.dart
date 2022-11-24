@@ -13,6 +13,7 @@ class TreeNode extends StatefulWidget {
   final bool showActions;
   final bool contentTappable;
   final double offsetLeft;
+  final int? maxLines;
 
   final Function(TreeNodeData node) onTap;
   final void Function(bool checked, TreeNodeData node) onCheck;
@@ -35,6 +36,7 @@ class TreeNode extends StatefulWidget {
     required this.parent,
     this.parentState,
     required this.offsetLeft,
+    this.maxLines,
     required this.showCheckBox,
     required this.showActions,
     required this.contentTappable,
@@ -75,6 +77,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
         lazy: widget.lazy,
         load: widget.load,
         offsetLeft: widget.offsetLeft,
+        maxLines: widget.maxLines,
         showCheckBox: widget.showCheckBox,
         showActions: widget.showActions,
         contentTappable: widget.contentTappable,
@@ -172,7 +175,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: Text(
                       widget.data.title,
-                      maxLines: 1,
+                      maxLines: widget.maxLines ?? 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
