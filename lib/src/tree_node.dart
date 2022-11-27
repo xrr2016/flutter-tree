@@ -200,6 +200,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     },
                     child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
                   ),
+                if (widget.data.customActions?.isNotEmpty == true)
+                  ...widget.data.customActions!,
               ],
             ),
           ),
