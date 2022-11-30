@@ -171,12 +171,16 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     child: CircularProgressIndicator(strokeWidth: 1.0),
                   ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: Text(
-                      widget.data.title,
-                      maxLines: widget.maxLines ?? 1,
-                      overflow: TextOverflow.ellipsis,
+                  child: Container(
+                    key: ValueKey(widget.data.backgroundColor?.call()),
+                    color: widget.data.backgroundColor?.call(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      child: Text(
+                        widget.data.title,
+                        maxLines: widget.maxLines ?? 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
@@ -196,6 +200,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     },
                     child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
                   ),
+                if (widget.data.customActions?.isNotEmpty == true)
+                  ...widget.data.customActions!,
               ],
             ),
           ),

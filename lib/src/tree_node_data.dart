@@ -7,6 +7,8 @@ class TreeNodeData {
   dynamic extra;
   final Color? checkBoxCheckColor;
   final MaterialStateProperty<Color>? checkBoxFillColor;
+  final ValueGetter<Color>? backgroundColor;
+  final List<Widget>? customActions;
   List<TreeNodeData> children;
 
   TreeNodeData({
@@ -17,6 +19,8 @@ class TreeNodeData {
     this.extra,
     this.checkBoxCheckColor,
     this.checkBoxFillColor,
+    this.backgroundColor,
+    this.customActions,
   });
 
   TreeNodeData.from(TreeNodeData other):
