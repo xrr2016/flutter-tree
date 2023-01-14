@@ -9,6 +9,7 @@ class TreeView extends StatefulWidget {
   final bool lazy;
   final Widget icon;
   final double offsetLeft;
+  final double offsetRight;
   final int? maxLines;
   final bool showFilter;
   final String filterPlaceholder;
@@ -46,6 +47,7 @@ class TreeView extends StatefulWidget {
     this.load,
     this.lazy = false,
     this.offsetLeft = 24.0,
+    this.offsetRight = 0.0,
     this.maxLines,
     this.showFilter = false,
     this.filterPlaceholder = 'Search',
@@ -74,7 +76,8 @@ class _TreeViewState extends State<TreeView> {
         tempNode.children = _filter(val, tempNode.children);
       }
 
-      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) ||
+          tempNode.children.isNotEmpty) {
         tempNodes.add(tempNode);
       }
     }
@@ -83,7 +86,7 @@ class _TreeViewState extends State<TreeView> {
   }
 
   void _onChange(String val) {
-     _renderList = widget.data;
+    _renderList = widget.data;
 
     if (val.isNotEmpty) {
       _renderList = _filter(val, _renderList);
@@ -150,11 +153,10 @@ class _TreeViewState extends State<TreeView> {
                 bottom: 12.0,
               ),
               child: TextField(
-                onChanged: _onChange,
-                 decoration: InputDecoration(
-                  labelText: widget.filterPlaceholder,
-                )
-              ),
+                  onChanged: _onChange,
+                  decoration: InputDecoration(
+                    labelText: widget.filterPlaceholder,
+                  )),
             ),
           ...List.generate(
             _renderList.length,
@@ -169,6 +171,7 @@ class _TreeViewState extends State<TreeView> {
                 icon: widget.icon,
                 lazy: widget.lazy,
                 offsetLeft: widget.offsetLeft,
+                offsetRight: widget.offsetRight,
                 maxLines: widget.maxLines,
                 showCheckBox: widget.showCheckBox,
                 showActions: widget.showActions,
