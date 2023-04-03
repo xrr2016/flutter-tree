@@ -28,6 +28,7 @@ class TreeView extends StatefulWidget {
   final void Function(bool checked, TreeNodeData node)? onCheck;
   final void Function(TreeNodeData node, TreeNodeData parent)? onAppend;
   final void Function(TreeNodeData node, TreeNodeData parent)? onRemove;
+  final void Function(String text)? onTextTap;
 
   final TreeNodeData Function(TreeNodeData parent)? append;
   final Future<List<TreeNodeData>> Function(TreeNodeData parent)? load;
@@ -54,6 +55,7 @@ class TreeView extends StatefulWidget {
     this.contentTappable = false,
     this.icon = const Icon(Icons.expand_more, size: 16.0),
     this.manageParentState = false,
+    this.onTextTap,
   }) : super(key: key);
 
   @override
@@ -74,7 +76,8 @@ class _TreeViewState extends State<TreeView> {
         tempNode.children = _filter(val, tempNode.children);
       }
 
-      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) || tempNode.children.isNotEmpty) {
+      if (tempNode.title.contains(RegExp(val, caseSensitive: false)) ||
+          tempNode.children.isNotEmpty) {
         tempNodes.add(tempNode);
       }
     }
@@ -83,7 +86,7 @@ class _TreeViewState extends State<TreeView> {
   }
 
   void _onChange(String val) {
-     _renderList = widget.data;
+    _renderList = widget.data;
 
     if (val.isNotEmpty) {
       _renderList = _filter(val, _renderList);
@@ -150,11 +153,10 @@ class _TreeViewState extends State<TreeView> {
                 bottom: 12.0,
               ),
               child: TextField(
-                onChanged: _onChange,
-                 decoration: InputDecoration(
-                  labelText: widget.filterPlaceholder,
-                )
-              ),
+                  onChanged: _onChange,
+                  decoration: InputDecoration(
+                    labelText: widget.filterPlaceholder,
+                  )),
             ),
           ...List.generate(
             _renderList.length,
@@ -180,6 +182,7 @@ class _TreeViewState extends State<TreeView> {
                 onRemove: widget.onRemove ?? (n, p) {},
                 onAppend: widget.onAppend ?? (n, p) {},
                 onCollapse: widget.onCollapse ?? (n) {},
+                onTextTap: widget.onTextTap ?? (n) {},
               );
             },
           )

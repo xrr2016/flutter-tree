@@ -29,6 +29,7 @@ class TreeNode extends StatefulWidget {
 
   final void Function(TreeNodeData node) append;
   final void Function(TreeNodeData node, TreeNodeData parent) onAppend;
+  final void Function(String text) onTextTap;
 
   const TreeNode({
     Key? key,
@@ -52,13 +53,15 @@ class TreeNode extends StatefulWidget {
     required this.onAppend,
     required this.onRemove,
     required this.onCollapse,
+    required this.onTextTap,
   }) : super(key: key);
 
   @override
   _TreeNodeState createState() => _TreeNodeState();
 }
 
-class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin {
+class _TreeNodeState extends State<TreeNode>
+    with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
   bool _isChecked = false;
   bool _showLoading = false;
@@ -88,6 +91,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
         onCollapse: widget.onCollapse,
         onRemove: widget.onRemove,
         onAppend: widget.onAppend,
+        onTextTap: widget.onTextTap,
       );
     });
   }
@@ -116,7 +120,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     if (widget.parentState != null) _isChecked = widget.data.checked;
 
-    bool hasData = widget.data.children.isNotEmpty || (widget.lazy && !_isExpanded);
+    bool hasData =
+        widget.data.children.isNotEmpty || (widget.lazy && !_isExpanded);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,17 +129,21 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
         InkWell(
           splashColor: widget.contentTappable ? null : Colors.transparent,
           highlightColor: widget.contentTappable ? null : Colors.transparent,
-          mouseCursor: widget.contentTappable ? SystemMouseCursors.click : MouseCursor.defer,
-          onTap: widget.contentTappable ? () {
-            if (hasData) {
-              widget.onTap(widget.data);
-              toggleExpansion();
-            } else {
-              _isChecked = !_isChecked;
-              widget.onCheck(_isChecked, widget.data);
-              setState(() {});
-            }
-          } : (){},
+          mouseCursor: widget.contentTappable
+              ? SystemMouseCursors.click
+              : MouseCursor.defer,
+          onTap: widget.contentTappable
+              ? () {
+                  if (hasData) {
+                    widget.onTap(widget.data);
+                    toggleExpansion();
+                  } else {
+                    _isChecked = !_isChecked;
+                    widget.onCheck(_isChecked, widget.data);
+                    setState(() {});
+                  }
+                }
+              : () {},
           child: Container(
             margin: const EdgeInsets.only(bottom: 2.0),
             padding: const EdgeInsets.only(right: 12.0),
@@ -145,10 +154,12 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                   child: IconButton(
                     iconSize: 16,
                     icon: hasData ? widget.icon : Container(),
-                    onPressed: hasData ? () {
-                      widget.onTap(widget.data);
-                      toggleExpansion();
-                    } : null,
+                    onPressed: hasData
+                        ? () {
+                            widget.onTap(widget.data);
+                            toggleExpansion();
+                          }
+                        : null,
                   ),
                   turns: _turnsTween.animate(_rotationController),
                 ),
@@ -176,10 +187,15 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                     color: widget.data.backgroundColor?.call(),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                      child: Text(
-                        widget.data.title,
-                        maxLines: widget.maxLines ?? 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: GestureDetector(
+                        onTap: () {
+                          widget.onTextTap(widget.data.extra);
+                        },
+                        child: Text(
+                          widget.data.title,
+                          maxLines: widget.maxLines ?? 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ),
@@ -198,7 +214,8 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
                       widget.remove(widget.data);
                       widget.onRemove(widget.data, widget.parent);
                     },
-                    child: const Text('Remove', style: TextStyle(fontSize: 12.0)),
+                    child:
+                        const Text('Remove', style: TextStyle(fontSize: 12.0)),
                   ),
                 if (widget.data.customActions?.isNotEmpty == true)
                   ...widget.data.customActions!,
