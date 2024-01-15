@@ -8,7 +8,7 @@ class TreeView extends StatefulWidget {
 
   final bool lazy;
   final Widget icon;
-  final double offsetLeft;
+  final double offset;
   final int? maxLines;
   final bool showFilter;
   final String filterPlaceholder;
@@ -45,7 +45,7 @@ class TreeView extends StatefulWidget {
     this.append,
     this.load,
     this.lazy = false,
-    this.offsetLeft = 24.0,
+    this.offset = 24.0,
     this.maxLines,
     this.showFilter = false,
     this.filterPlaceholder = 'Search',
@@ -168,7 +168,7 @@ class _TreeViewState extends State<TreeView> {
                 data: _renderList[index],
                 icon: widget.icon,
                 lazy: widget.lazy,
-                offsetLeft: widget.offsetLeft,
+                offset: widget.offset,
                 maxLines: widget.maxLines,
                 showCheckBox: widget.showCheckBox,
                 showActions: widget.showActions,

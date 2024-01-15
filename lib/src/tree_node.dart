@@ -12,7 +12,7 @@ class TreeNode extends StatefulWidget {
   final bool showCheckBox;
   final bool showActions;
   final bool contentTappable;
-  final double offsetLeft;
+  final double offset;
   final int? maxLines;
 
   final Function(TreeNodeData node) onTap;
@@ -35,7 +35,7 @@ class TreeNode extends StatefulWidget {
     required this.data,
     required this.parent,
     this.parentState,
-    required this.offsetLeft,
+    required this.offset,
     this.maxLines,
     required this.showCheckBox,
     required this.showActions,
@@ -76,7 +76,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
         icon: widget.icon,
         lazy: widget.lazy,
         load: widget.load,
-        offsetLeft: widget.offsetLeft,
+        offset: widget.offset,
         maxLines: widget.maxLines,
         showCheckBox: widget.showCheckBox,
         showActions: widget.showActions,
@@ -209,7 +209,7 @@ class _TreeNodeState extends State<TreeNode> with SingleTickerProviderStateMixin
         SizeTransition(
           sizeFactor: _rotationController,
           child: Padding(
-            padding: EdgeInsets.only(left: widget.offsetLeft),
+            padding: EdgeInsets.symmetric(horizontal: widget.offset),
             child: Column(children: _geneTreeNodes(widget.data.children)),
           ),
         )
