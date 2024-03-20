@@ -23,8 +23,18 @@ class TreeNodeData {
     this.customActions,
   });
 
-  TreeNodeData.from(TreeNodeData other):
-    this(title: other.title, expanded: other.expanded, checked: other.checked, extra: other.extra, children: other.children);
+  TreeNodeData.from(TreeNodeData other)
+      : this(
+          title: other.title,
+          expanded: other.expanded,
+          checked: other.checked,
+          extra: other.extra,
+          children: other.children,
+          checkBoxCheckColor: other.checkBoxCheckColor,
+          checkBoxFillColor: other.checkBoxFillColor,
+          backgroundColor: other.backgroundColor,
+          customActions: other.customActions,
+        );
 
   @override
   String toString() {
